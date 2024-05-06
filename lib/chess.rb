@@ -5,6 +5,25 @@ class Chess
 
   # Chess board rows
   ROWS = 'abcdefgh'
+  # Symbols
+  CHESS_SYMBOLS = {
+    white: {
+      king: "♔",
+      queen: "♕",
+      rook: "♖",
+      bishop: "♗",
+      knight: "♘",
+      pawn: "♙"
+    },
+    black: {
+      king: "♚",
+      queen: "♛",
+      rook: "♜",
+      bishop: "♝",
+      knight: "♞",
+      pawn: "♟︎"
+    }
+  }
 
   def initialize
     # Initialise the board as an 8x8 array
@@ -12,8 +31,10 @@ class Chess
 
     # Set a pawn at a8 for testing
     @board[0][0] = Pawn.new
+    @board[1][4] = Pawn.new
+    @board[2][2] = Pawn.new
 
-    p @board
+    @board.each { |row| puts "#{row}\n" }
   end
   
   def get_piece(column, row)
@@ -40,18 +61,43 @@ class Chess
 
     p @board
   end
+
+  # Render the current state of the @board with letters and numbers
+  def render_board
+    puts " "
+
+    board.each_with_index do |row, row_number|
+      # Print row numbers
+      print " #{8 - row_number} "
+
+      # If square is nil, print out dot, if object, print out object's symbol
+      row.each do |square|
+        print square.nil? ? " · " : " #{square.symbol} "
+      end
+      
+      print "\n"
+    end
+
+    # Letters underneath
+    print "    a  b  c  d  e  f  g  h"
+  end
 end
 
 # Pawn class
 class Pawn
+  attr_reader :symbol
+
   def initialize
     @name = "Pawn"
+    @symbol = '♙'
+    @color = :white
   end
 end
 
 game = Chess.new
 
 # Get what piece is at 'a8' (left upper corner)
-p game.get_piece('a', 8)
-# Set a piece at 'a1'
-game.set_piece(Pawn.new, 'a', 1)
+# p game.get_piece('a', 8)
+# # Set a piece at 'a1'
+# game.set_piece(Pawn.new, 'a', 1)
+game.render_board
