@@ -5,6 +5,25 @@ class Chess
 
   # Chess board rows
   ROWS = 'abcdefgh'
+  # Symbols
+  CHESS_SYMBOLS = {
+    white: {
+      king: "♔",
+      queen: "♕",
+      rook: "♖",
+      bishop: "♗",
+      knight: "♘",
+      pawn: "♙"
+    },
+    black: {
+      king: "♚",
+      queen: "♛",
+      rook: "♜",
+      bishop: "♝",
+      knight: "♞",
+      pawn: "♟︎"
+    }
+  }
 
   def initialize
     # Initialise the board as an 8x8 array
