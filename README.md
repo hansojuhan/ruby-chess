@@ -29,6 +29,8 @@ This is the Ruby Final Project for the [Odin Project](https://www.theodinproject
 
 Will use RSpec to test the units.
 
+Also will practice Git, developing on a separate branch, adding new features on features branches and then merging using the rebase workflow.
+
 Chess notation is saved as: "1. Bb5 a6", "2. d3 Bb4+", each row contains the white and black move with the piece and destination, along with other information. Therefore game history + state can be saved in one long 2D array: [["first white move", "first black move"],["second", "second"],["third", "third"]]. If the chess engine goes through the list and makes the move, you will arrive at the current state of the game (save/load game).
 
 A #render method will render the gameboard with the symbols. Rendering is easy, but the current game board also has to be saved somewhere, such as a 8x8 array, where each element can contain a piece.
