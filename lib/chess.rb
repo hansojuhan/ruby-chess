@@ -38,7 +38,7 @@ class Chess
   end
   
   def get_piece(column, row)
-    @board[8 - row][ROWS.index(column)]
+    @board[8 - row.to_i][ROWS.index(column)]
   end
 
   def set_piece(piece, column, row)
@@ -57,14 +57,14 @@ class Chess
     # I moved my pawn from d2 -> d3
     # Input: pawn, d, 3
     # Output: board with pawn at board[5][3]
-    @board[8 - row][ROWS.index(column)] = piece
+    @board[8 - row.to_i][ROWS.index(column)] = piece
 
     p @board
   end
 
   # Render the current state of the @board with letters and numbers
   def render_board
-    puts " "
+    print `clear`
 
     board.each_with_index do |row, row_number|
       # Print row numbers
@@ -79,8 +79,43 @@ class Chess
     end
 
     # Letters underneath
-    print "    a  b  c  d  e  f  g  h"
+    print "    a  b  c  d  e  f  g  h\n\n"
   end
+
+  def make_move
+    # Get two coordinates:
+    # First which piece to move, then where to move it
+    origin = parse_input "From:"
+    destination = parse_input "To:"
+
+    # Later will check this before, but
+    # Take the object from origin
+    # And put it at destination
+    piece = get_piece(origin[0], origin[1])
+
+    set_piece(piece, destination[0], destination[1])
+    set_piece(nil, origin[0], origin[1])
+    # puts piece
+  end
+
+  private
+  # Returns input if they are coordinates on the chess board
+  # For example, a1 or h8
+  def parse_input(query_text)
+    input_gotten = false
+    until input_gotten do
+      
+      print "#{query_text}\t"
+      input = gets.chomp
+
+      if input.length == 2 && ('abcdefgh').include?(input[0]) && input[1].to_i.between?(1,8)
+        return input
+      else
+        render_board
+      end
+    end
+  end
+
 end
 
 # Pawn class
@@ -101,3 +136,13 @@ game = Chess.new
 # # Set a piece at 'a1'
 # game.set_piece(Pawn.new, 'a', 1)
 game.render_board
+game.make_move
+game.render_board
+game.make_move
+game.render_board
+
+# To do:
+# Refactor getting coordinates so that they would be held in an array of 2
+# [column, row]
+
+# Coordinates should be variables of the objects
