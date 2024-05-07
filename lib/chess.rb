@@ -1,4 +1,5 @@
 require 'pry-byebug'
+require_relative 'chess_pieces'
 
 class Chess
   attr_reader :board
@@ -6,35 +7,11 @@ class Chess
   # Chess board rows
   ROWS = 'abcdefgh'
   # Symbols
-  CHESS_SYMBOLS = {
-    white: {
-      king: "♔",
-      queen: "♕",
-      rook: "♖",
-      bishop: "♗",
-      knight: "♘",
-      pawn: "♙"
-    },
-    black: {
-      king: "♚",
-      queen: "♛",
-      rook: "♜",
-      bishop: "♝",
-      knight: "♞",
-      pawn: "♟︎"
-    }
-  }
+
 
   def initialize
     # Initialise the board as an 8x8 array
     @board = Array.new(8) { Array.new(8) }
-
-    # Set a pawn at a8 for testing
-    @board[0][0] = Pawn.new
-    @board[1][4] = Pawn.new
-    @board[2][2] = Pawn.new
-
-    @board.each { |row| puts "#{row}\n" }
   end
   
   def get_piece(column, row)
@@ -57,9 +34,21 @@ class Chess
     # I moved my pawn from d2 -> d3
     # Input: pawn, d, 3
     # Output: board with pawn at board[5][3]
-    @board[8 - row.to_i][ROWS.index(column)] = piece
 
-    p @board
+    # Parse coordinates both as letters or numbers
+    if column.is_a? Integer
+      board_column = column
+    elsif column.is_a? String
+      board_column = ROWS.index(column)
+    end
+
+    if row.is_a? Integer
+      board_row = 8 - row
+    elsif row.is_a? String
+      board_row = 8 - row.to_i
+    end
+
+    @board[board_row][board_column] = piece
   end
 
   # Render the current state of the @board with letters and numbers
@@ -98,6 +87,26 @@ class Chess
     # puts piece
   end
 
+  def start_new_game
+    # To start a new game, black and white pieces have to be
+    # generated and put on the board, move history needs to 
+    # be reset.
+
+    # Start with white
+    for i in 0...8
+      set_piece(Pawn.new, i, 2)
+    end
+    set_piece(Rook.new,"a",1)
+    set_piece(Rook.new,"h",1)
+    set_piece(Knight.new,"b",1)
+    set_piece(Knight.new,"g",1)
+    set_piece(Bishop.new,"f",1)
+    set_piece(Bishop.new,"c",1)
+    set_piece(Queen.new,"d",1)
+    set_piece(King.new,"e",1)
+
+  end
+
   private
   # Returns input if they are coordinates on the chess board
   # For example, a1 or h8
@@ -118,27 +127,14 @@ class Chess
 
 end
 
-# Pawn class
-class Pawn
-  attr_reader :symbol
-
-  def initialize
-    @name = "Pawn"
-    @symbol = '♙'
-    @color = :white
-  end
-end
-
 game = Chess.new
 
 # Get what piece is at 'a8' (left upper corner)
 # p game.get_piece('a', 8)
 # # Set a piece at 'a1'
 # game.set_piece(Pawn.new, 'a', 1)
-game.render_board
-game.make_move
-game.render_board
-game.make_move
+
+game.start_new_game
 game.render_board
 
 # To do:
