@@ -1,4 +1,5 @@
 require 'pry-byebug'
+require_relative 'chess_pieces'
 
 class Chess
   attr_reader :board
