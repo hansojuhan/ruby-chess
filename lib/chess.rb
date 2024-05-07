@@ -151,19 +151,8 @@ end
 
 game = Chess.new
 
-# Get what piece is at 'a8' (left upper corner)
-# p game.get_piece('a', 8)
-# # Set a piece at 'a1'
-# game.set_piece(Pawn.new, 'a', 1)
-
 game.start_new_game
 game.render_board
 
 game.make_move
 game.render_board
-
-# To do:
-# Refactor getting coordinates so that they would be held in an array of 2
-# [column, row]
-
-# Coordinates should be variables of the objects
