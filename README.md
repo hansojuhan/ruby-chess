@@ -92,12 +92,13 @@ There are some game over conditions:
 
 ### Plan
 
-1. [ ] Create the board and the class for pawn then try to move it on the board with input and render it out.
+1. [x] Create the board and the class for pawn then try to move it on the board with input and render it out.
         [x] Create board
         [x] Create class for pawn
         [x] Rendering the board
-        [ ] Move it with input
-        [ ] Render it out
+        [x] Move it with input
+        [x] Render it out
 
-
-2. ...
+2. [ ] New game method that will initialise the pieces on the board.
+        [ ] Create all classes
+        [ ] Create method that will generate objects in the right place.
