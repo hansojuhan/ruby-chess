@@ -3,6 +3,7 @@ require_relative 'chess_pieces'
 
 class Chess
   attr_reader :board
+  attr_accessor :history
 
   # Chess board rows
   ROWS = 'abcdefgh'
@@ -12,6 +13,9 @@ class Chess
   def initialize
     # Initialise the board as an 8x8 array
     @board = Array.new(8) { Array.new(8) }
+
+    # History containing all game moves done
+    @history = []
   end
   
   def get_piece(column, row)
@@ -94,17 +98,32 @@ class Chess
 
     # Start with white
     for i in 0...8
-      set_piece(Pawn.new, i, 2)
+      set_piece(Pawn.new(:white), i, 2)
     end
-    set_piece(Rook.new,"a",1)
-    set_piece(Rook.new,"h",1)
-    set_piece(Knight.new,"b",1)
-    set_piece(Knight.new,"g",1)
-    set_piece(Bishop.new,"f",1)
-    set_piece(Bishop.new,"c",1)
-    set_piece(Queen.new,"d",1)
-    set_piece(King.new,"e",1)
+    set_piece(Rook.new(:white),"a",1)
+    set_piece(Rook.new(:white),"h",1)
+    set_piece(Knight.new(:white),"b",1)
+    set_piece(Knight.new(:white),"g",1)
+    set_piece(Bishop.new(:white),"f",1)
+    set_piece(Bishop.new(:white),"c",1)
+    set_piece(Queen.new(:white),"d",1)
+    set_piece(King.new(:white),"e",1)
 
+    # Then black
+    for i in 0...8
+      set_piece(Pawn.new(:black), i, 7)
+    end
+    set_piece(Rook.new(:black),"a",8)
+    set_piece(Rook.new(:black),"h",8)
+    set_piece(Knight.new(:black),"b",8)
+    set_piece(Knight.new(:black),"g",8)
+    set_piece(Bishop.new(:black),"f",8)
+    set_piece(Bishop.new(:black),"c",8)
+    set_piece(Queen.new(:black),"d",8)
+    set_piece(King.new(:black),"e",8)
+
+    # Reset history
+    self.history = []
   end
 
   private
