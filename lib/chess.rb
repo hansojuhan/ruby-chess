@@ -18,39 +18,23 @@ class Chess
     @history = []
   end
   
-  def get_piece(coordinates)
-    @board[8 - coordinates[1].to_i][ROWS.index(coordinates[0])]
-  end
+  # def get_piece(coordinates)
+  #   @board[8 - coordinates[1].to_i][ROWS.index(coordinates[0])]
+  # end
+
+#   def set_piece(piece, destination)
+#     # Input will be an array [6, 1], so it's easy
+#     self.board[destination[0]][destination[1]] = piece
+
+# binding.pry
+#     puts "asdf"
+#   end
+
 
   def set_piece(piece, coordinates)
-    # Chess board has rows and columns
-    # Row 1 is the end of the board where white begins
-    # Column 1 starts from left to right
-
-    # Example: 1, a - Row 1, Column 1 - array[7][0]
-    # Example: 5, h - Row 5, Column h - array[3][7]
-
-    # Columns a,b,c,d,e,f,g,h
-    # Rows 1,2,3,4,5,6,7,8
-
-    # Find the right array place according to input coordinates
-    
-    # I moved my pawn from d2 -> d3
-    # Input: pawn, d, 3
-    # Output: board with pawn at board[5][3]
-
     # Parse coordinates both as letters or numbers
-    if coordinates[0].is_a? Integer
-      board_column = coordinates[0]
-    elsif coordinates[0].is_a? String
-      board_column = ROWS.index(coordinates[0])
-    end
-
-    if coordinates[1].is_a? Integer
-      board_row = 8 - coordinates[1]
-    elsif coordinates[1].is_a? String
-      board_row = 8 - coordinates[1].to_i
-    end
+    board_column = ROWS.index(coordinates[0])
+    board_row = 8 - coordinates[1].to_i
 
     @board[board_row][board_column] = piece
   end
@@ -63,7 +47,8 @@ class Chess
 
     board.each_with_index do |row, row_number|
       # Print row numbers
-      print " #{8 - row_number} "
+      print " #{row_number} "
+      # print " #{8 - row_number} " TODO
 
       # If square is nil, print out dot, if object, print out object's symbol
       row.each do |square|
@@ -74,22 +59,38 @@ class Chess
     end
 
     # Letters underneath
-    print "    a  b  c  d  e  f  g  h\n\n"
+    print "    0  1  2  3  4  5  6  7\n\n"
+    # print "    a  b  c  d  e  f  g  h\n\n" TODO
   end
 
   def make_move
     # Get two coordinates:
-    # First which piece to move, then where to move it
-    origin = parse_input "From:"
-    destination = parse_input "To:"
+    origin = parse_input_basic_array "From:"
+    destination = parse_input_basic_array "To:"
 
-    # Later will check this before, but
-    # Take the object from origin
-    # And put it at destination
-    piece = get_piece(origin)
+    # Find piece
+    piece = get_piece_basic(origin)
 
-    set_piece(piece, destination)
-    set_piece(nil, origin)
+    # Move it if move is valid
+    if !piece.nil? && piece.valid_move?(board, origin, destination)
+      move_piece(piece, origin, destination)
+      move_made = true
+    end
+  end
+
+  def add_to_history(piece)
+
+  def move_piece(piece, origin, destination)
+    # Need to move piece into the array position at destination
+    board[destination[0]][destination[1]] = piece
+    # And remove from origin
+    board[origin[0]][origin[1]] = nil
+    # Increment piece's own move counter
+    piece.moves_done += 1
+  end
+
+  def get_piece_basic(array)
+    board[array[0]][array[1]]
   end
 
   def start_new_game
@@ -98,36 +99,69 @@ class Chess
     # be reset.
 
     # Start with white
-    for i in 0...8
-      set_piece(Pawn.new(:white),[i, 2])
-    end
-    set_piece(Rook.new(:white),["a",1])
-    set_piece(Rook.new(:white),["h",1])
-    set_piece(Knight.new(:white),["b",1])
-    set_piece(Knight.new(:white),["g",1])
-    set_piece(Bishop.new(:white),["f",1])
-    set_piece(Bishop.new(:white),["c",1])
-    set_piece(Queen.new(:white),["d",1])
-    set_piece(King.new(:white),["e",1])
+    # set_piece(Pawn.new(:white),["a", 2])
+    # set_piece(Pawn.new(:white),["b", 2])
+    # set_piece(Pawn.new(:white),["c", 2])
+    # set_piece(Pawn.new(:white),["d", 2])
+    set_piece(Pawn.new(:white),["e", 2])
+    # set_piece(Pawn.new(:white),["f", 2])
+    # set_piece(Pawn.new(:white),["g", 2])
+    # set_piece(Pawn.new(:white),["h", 2])
+
+    # set_piece(Rook.new(:white),["a",1])
+    # set_piece(Knight.new(:white),["b",1])
+    # set_piece(Bishop.new(:white),["c",1])
+    # set_piece(Queen.new(:white),["d",1])
+    # set_piece(King.new(:white),["e",1])
+    # set_piece(Bishop.new(:white),["f",1])
+    # set_piece(Knight.new(:white),["g",1])
+    # set_piece(Rook.new(:white),["h",1])
 
     # Then black
-    for i in 0...8
-      set_piece(Pawn.new(:black),[i, 7])
-    end
-    set_piece(Rook.new(:black),["a",8])
-    set_piece(Rook.new(:black),["h",8])
-    set_piece(Knight.new(:black),["b",8])
-    set_piece(Knight.new(:black),["g",8])
-    set_piece(Bishop.new(:black),["f",8])
-    set_piece(Bishop.new(:black),["c",8])
-    set_piece(Queen.new(:black),["d",8])
-    set_piece(King.new(:black),["e",8])
+    # set_piece(Pawn.new(:black),["a", 7])
+    # set_piece(Pawn.new(:black),["b", 7])
+    # set_piece(Pawn.new(:black),["c", 7])
+    # set_piece(Pawn.new(:black),["d", 7])
+    # set_piece(Pawn.new(:black),["e", 7])
+    # set_piece(Pawn.new(:black),["f", 7])
+    # set_piece(Pawn.new(:black),["g", 7])
+    # set_piece(Pawn.new(:black),["h", 7])
+
+    # set_piece(Rook.new(:black),["a",8])
+    # set_piece(Rook.new(:black),["h",8])
+    # set_piece(Knight.new(:black),["b",8])
+    # set_piece(Knight.new(:black),["g",8])
+    # set_piece(Bishop.new(:black),["f",8])
+    # set_piece(Bishop.new(:black),["c",8])
+    # set_piece(Queen.new(:black),["d",8])
+    # set_piece(King.new(:black),["e",8])
 
     # Reset history
     self.history = []
   end
 
   private
+  def parse_input_basic_array(query_text)
+    input_gotten = false
+    until input_gotten do
+      
+      print "#{query_text}\t"
+      input = gets.chomp
+
+      if input.length == 2 && input[0].to_i.between?(0,7) && input[1].to_i.between?(0,7)
+        result = input.split("")
+
+        result = result.map { |e| e.to_i }
+        # temp = result[1]
+        # result[1] = result[0]
+        # result[0] = temp
+        return result
+      else
+        render_board
+      end
+    end
+  end
+
   # Returns move array[column, row] if they are coordinates on the chess board
   # For example, [a, 1], [g, 8]
   def parse_input(query_text)
@@ -154,5 +188,7 @@ game = Chess.new
 game.start_new_game
 game.render_board
 
-game.make_move
-game.render_board
+loop do
+  game.make_move
+  game.render_board
+end
