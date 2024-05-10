@@ -70,15 +70,38 @@ class Chess
 
     # Find piece
     piece = get_piece_basic(origin)
+    opponents_piece = get_piece_basic(destination)
 
     # Move it if move is valid
     if !piece.nil? && piece.valid_move?(board, origin, destination)
-      move_piece(piece, origin, destination)
+
+      # If destination includes an opponent's piece, take it, otherwise move
+      unless opponents_piece.nil?
+        take_piece(piece, opponents_piece, origin, destination)
+      else
+        move_piece(piece, origin, destination)
+      end
+
+      # Finish move, record history
       move_made = true
     end
   end
 
-  def add_to_history(piece)
+  def take_piece(piece, opponents_piece, origin, destination)
+    # What to do to take
+    
+    # Move piece to destination
+    board[destination[0]][destination[1]] = piece
+    # Remove from origin
+    board[origin[0]][origin[1]] = nil
+    
+    # Set opponents piece as taken
+    # needed?
+    opponents_piece.taken = true
+
+    # Increment piece's move counter
+    piece.moves_done += 1
+  end
 
   def move_piece(piece, origin, destination)
     # Need to move piece into the array position at destination

@@ -1,6 +1,6 @@
 class ChessPiece
   attr_reader :color, :symbol
-  attr_accessor :moves_done
+  attr_accessor :moves_done, :taken
 
   CHESS_SYMBOLS = {
     white: {
@@ -27,6 +27,9 @@ class ChessPiece
 
     # Keep track of amount of moves piece has done.
     @moves_done = 0
+
+    # Status, piece is alive or taken
+    @taken = false
   end
 end
 
@@ -39,7 +42,7 @@ class Pawn < ChessPiece
       destination[0] == origin[0] - 1 && 
       destination[1] == origin[1] &&
       board[destination[0]][destination[1]].nil?
-
+8
       return true
     end
 
