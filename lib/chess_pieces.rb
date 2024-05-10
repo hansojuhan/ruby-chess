@@ -1,5 +1,5 @@
 class ChessPiece
-  attr_reader :color, :symbol
+  attr_reader :color, :symbol, :notation_symbol
   attr_accessor :moves_done, :taken
 
   CHESS_SYMBOLS = {
@@ -54,7 +54,7 @@ class Pawn < ChessPiece
       destination[0] == origin[0] - 1 && 
       destination[1] == origin[1] &&
       board[destination[0]][destination[1]].nil?
-8
+
       return true
     end
 
