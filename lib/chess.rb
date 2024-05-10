@@ -7,8 +7,6 @@ class Chess
 
   # Chess board rows
   ROWS = 'abcdefgh'
-  # Symbols
-
 
   def initialize
     # Initialise the board as an 8x8 array

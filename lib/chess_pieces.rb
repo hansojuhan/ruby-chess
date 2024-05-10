@@ -21,9 +21,21 @@ class ChessPiece
     }
   }
 
+  NOTATION_SYMBOLS = {
+    king: "K",
+    queen: "Q",
+    rook: "R",
+    bishop: "B",
+    knight: "N",
+    pawn: ""
+  }
+
   def initialize(color)
     @color = color
     @symbol = CHESS_SYMBOLS[@color][self.class.name.downcase.to_sym]
+
+    # Symbol for notation
+    @notation_symbol = NOTATION_SYMBOLS[self.class.name.downcase.to_sym]
 
     # Keep track of amount of moves piece has done.
     @moves_done = 0
