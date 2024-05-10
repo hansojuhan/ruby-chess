@@ -59,6 +59,8 @@ class Chess
     # Letters underneath
     print "    0  1  2  3  4  5  6  7\n\n"
     # print "    a  b  c  d  e  f  g  h\n\n" TODO
+
+    render_history
   end
 
   def make_move
@@ -81,8 +83,86 @@ class Chess
       end
 
       # Finish move, record history
+      update_history(piece, opponents_piece, origin, destination)
       move_made = true
     end
+  end
+
+  def render_history
+    history.each_with_index do |round, round_number|
+      print "#{round_number + 1}) #{round[0]},\t#{round[1]}\n"
+    end
+  end
+
+  def update_history(piece, opponents_piece = nil, origin, destination)
+    # Writes up history in chess algebraic notation
+    # Rules:
+    # 1. To write a move, give name of piece and destination square. 
+    # 2. If piece captured, include x for "captures" before the destination square.
+    # 2.1. When a pawn makes a capture, always include the originating file, as in fxe4 and gxf6 above.
+   
+    # Symbols:
+    # x: captures
+    # 0-0: kingside castle
+    # 0-0-0: queenside castle
+    # +: check
+    #: checkmate
+
+    # Pieces:
+    #  :  pawn (no symbol)
+    # R:  rook
+    # B:  bishop
+    # N:  knight
+    # Q:  queen
+    # K:  king
+    
+    # Writing the move:
+    # Moves are in pairs: turn: white move, black move
+    # Example:  1. Nc3, f5
+    
+    # To write down a move:
+    move = ""
+    # Get the notation symbol for piece (N, B, etc.)
+    move << piece.notation_symbol
+    # check if piece was taken, in which case add 'x'
+    move << 'x' unless opponents_piece.nil?
+    # write destination
+    move << coordinates_to_string(destination)
+    # add +, # in case of check, mate (TODO later)
+
+    # If first move of turn, needs to be added as element 1 of array length 2 into the main array
+    # If second move of turn, second element of array length 2
+    # test_array = [["Nc5","f5"],["e4","fxe4"],["Nxe4","Nf6"],["d2",""]]
+
+    # 3 options:
+    # empty (first move of the game)
+    if history.empty?
+      # Create a new 2-element array
+      # Write first move into it and add to history array
+      history.push [move, nil]
+
+    elsif history[-1][0] && history[-1][1].nil?
+      # white move done: ["e4",nil]
+      # Take the last element in the history array
+      # Add new move to the second place of it
+      history[-1][1] = move
+
+    elsif history[-1][0] && history[-1][1]
+      # black move done: ["e4","d6"]
+      # Create a new 2-element array
+      # Write first move into it and add to history array
+      history.push [move, nil]
+    end
+  end
+
+  def coordinates_to_string(coordinates)
+    # Input will be [1, 3] (row, column)
+    output = ""
+    # Output should be "d7"
+    output << ROWS[coordinates[1]]
+    output << (8 - coordinates[1]).to_s
+    
+    return output
   end
 
   def take_piece(piece, opponents_piece, origin, destination)
