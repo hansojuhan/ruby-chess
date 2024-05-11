@@ -57,6 +57,9 @@ class Chess
   def render_board
 
     print `clear`
+    
+    # Show game history
+    render_history
 
     print "\n"
 
@@ -75,7 +78,8 @@ class Chess
 
     board.each_with_index do |row, row_number|
       # Print row numbers
-      print "#{8 - row_number} (#{row_number}) "
+      test_row_number = TESTMODE ? "(#{row_number}) " : ""
+      print "#{8 - row_number}  #{test_row_number}"
       # print " #{8 - row_number} " TODO
 
       # If square is nil, print out dot, if object, print out object's symbol
@@ -87,11 +91,12 @@ class Chess
     end
 
     # Letters underneath
-    print "       0  1  2  3  4  5  6  7\n"
-    print "       a  b  c  d  e  f  g  h\n\n"
-
-    # Show game history
-    render_history
+    if TESTMODE
+      print "        0  1  2  3  4  5  6  7\n" 
+      print "        a  b  c  d  e  f  g  h\n\n"
+    else
+      print "    a  b  c  d  e  f  g  h\n\n"
+    end
   end
 
   def make_move
@@ -108,7 +113,7 @@ class Chess
     # Find piece
     piece = get_piece_basic(origin)
     opponents_piece = get_piece_basic(destination)
-    
+
     # Check if piece was found
     unless piece
       self.last_notification_message = "Choose a #{current_move} piece on the board!" 
@@ -142,6 +147,7 @@ class Chess
 
   # Render game turn history per round
   def render_history
+    puts "Turns:" unless history.empty?
     history.each_with_index do |round, round_number|
       print "#{round_number + 1}) #{round[0]},\t#{round[1]}\n"
     end
@@ -262,45 +268,45 @@ class Chess
     # be reset.
 
     # Start with white
-    # set_piece(Pawn.new(:white),["a", 2])
-    # set_piece(Pawn.new(:white),["b", 2])
-    # set_piece(Pawn.new(:white),["c", 2])
-    # set_piece(Pawn.new(:white),["d", 2])
-    set_piece(Pawn.new(:white),["e", 6])
-    # set_piece(Pawn.new(:white),["f", 2])
-    # set_piece(Pawn.new(:white),["g", 2])
-    # set_piece(Pawn.new(:white),["h", 2])
+    set_piece(Pawn.new(:white),["a", 2])
+    set_piece(Pawn.new(:white),["b", 2])
+    set_piece(Pawn.new(:white),["c", 2])
+    set_piece(Pawn.new(:white),["d", 2])
+    set_piece(Pawn.new(:white),["e", 2])
+    set_piece(Pawn.new(:white),["f", 2])
+    set_piece(Pawn.new(:white),["g", 2])
+    set_piece(Pawn.new(:white),["h", 2])
 
-    # set_piece(Rook.new(:white),["a",1])
-    # set_piece(Knight.new(:white),["b",1])
-    # set_piece(Bishop.new(:white),["c",1])
-    # set_piece(Queen.new(:white),["d",1])
-    # set_piece(King.new(:white),["e",1])
-    # set_piece(Bishop.new(:white),["f",1])
-    # set_piece(Knight.new(:white),["g",1])
-    # set_piece(Rook.new(:white),["h",1])
+    set_piece(Rook.new(:white),["a",1])
+    set_piece(Knight.new(:white),["b",1])
+    set_piece(Bishop.new(:white),["c",1])
+    set_piece(Queen.new(:white),["d",1])
+    set_piece(King.new(:white),["e",1])
+    set_piece(Bishop.new(:white),["f",1])
+    set_piece(Knight.new(:white),["g",1])
+    set_piece(Rook.new(:white),["h",1])
 
     # Then black
-    # set_piece(Pawn.new(:black),["a", 7])
-    # set_piece(Pawn.new(:black),["b", 7])
-    # set_piece(Pawn.new(:black),["c", 7])
+    set_piece(Pawn.new(:black),["a", 7])
+    set_piece(Pawn.new(:black),["b", 7])
+    set_piece(Pawn.new(:black),["c", 7])
     set_piece(Pawn.new(:black),["d", 7])
-    # set_piece(Pawn.new(:black),["e", 7])
-    # set_piece(Pawn.new(:black),["f", 7])
-    # set_piece(Pawn.new(:black),["g", 7])
-    # set_piece(Pawn.new(:black),["h", 7])
+    set_piece(Pawn.new(:black),["e", 7])
+    set_piece(Pawn.new(:black),["f", 7])
+    set_piece(Pawn.new(:black),["g", 7])
+    set_piece(Pawn.new(:black),["h", 7])
 
-    # set_piece(Rook.new(:black),["a",8])
-    # set_piece(Rook.new(:black),["h",8])
-    # set_piece(Knight.new(:black),["b",8])
-    # set_piece(Knight.new(:black),["g",8])
-    # set_piece(Bishop.new(:black),["f",8])
-    # set_piece(Bishop.new(:black),["c",8])
-    # set_piece(Queen.new(:black),["d",8])
-    # set_piece(King.new(:black),["e",8])
+    set_piece(Rook.new(:black),["a",8])
+    set_piece(Rook.new(:black),["h",8])
+    set_piece(Knight.new(:black),["b",8])
+    set_piece(Knight.new(:black),["g",8])
+    set_piece(Bishop.new(:black),["f",8])
+    set_piece(Bishop.new(:black),["c",8])
+    set_piece(Queen.new(:black),["d",8])
+    set_piece(King.new(:black),["e",8])
 
     # Reset history
-    # self.history = []
+    self.history = []
   end
 
   private
@@ -320,6 +326,7 @@ class Chess
         # result[0] = temp
         return result
       else
+        self.last_notification_message = "Choose a #{current_move} piece on the board!"
         render_board
       end
     end
@@ -344,6 +351,7 @@ class Chess
 
         return result
       else
+        self.last_notification_message = "Choose a #{current_move} piece on the board!"
         render_board
       end
     end
