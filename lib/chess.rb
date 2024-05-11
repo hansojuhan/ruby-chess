@@ -181,6 +181,7 @@ class Chess
     move << 'x' unless opponents_piece.nil?
     # write destination
     move << coordinates_to_string(destination)
+
     # add +, # in case of check, mate (TODO later)
 
     # If first move of turn, needs to be added as element 1 of array length 2 into the main array
@@ -213,8 +214,8 @@ class Chess
     # Input will be [1, 3] (row, column)
     output = ""
     # Output should be "d7"
-    output << ROWS[coordinates[1]]
-    output << (8 - coordinates[1]).to_s
+    output << 'abcdefgh'[coordinates[1]]
+    output << (8 - coordinates[0]).to_s
     
     return output
   end
