@@ -90,9 +90,3 @@ There are some game over conditions:
 1. Mate (player is checked so that he cannot move away)
 
 2. Stalemate (player is not checked, but cannot make any legal move)
-
-### Plan
-
-1. Create the board and the class for pawn, then try to move it on the board with input and render it out.
-
-2. ...
