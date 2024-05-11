@@ -84,6 +84,18 @@ class Chess
     piece = get_piece_basic(origin)
     opponents_piece = get_piece_basic(destination)
 
+    # Check if piece was found
+    unless piece
+      puts "Choose a piece!" 
+      return false
+    end
+
+    # Check if found piece is the same color as current move
+    unless piece.color == current_move
+      puts "It's #{current_move} turn! Choose the right piece"
+      return false
+    end
+
     # Move it if move is valid
     if !piece.nil? && piece.valid_move?(board, origin, destination)
 
@@ -96,7 +108,7 @@ class Chess
 
       # Finish move, record history
       update_history(piece, opponents_piece, origin, destination)
-      move_made = true
+      return true
     end
   end
 
@@ -250,7 +262,7 @@ class Chess
     # set_piece(King.new(:black),["e",8])
 
     # Reset history
-    self.history = []
+    # self.history = []
   end
 
   private
@@ -301,7 +313,15 @@ game = Chess.new
 game.start_new_game
 game.render_board
 
-loop do
+game.current_move
+
+move_made = false
+while !move_made do
   game.make_move
   game.render_board
 end
+# loop do
+# end
+
+# Idea: save the last error message in a variable and show it
+# Currently render board will remove it immediately.
