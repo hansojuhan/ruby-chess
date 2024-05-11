@@ -125,6 +125,9 @@ class Chess
       # Finish move, record history
       update_history(piece, opponents_piece, origin, destination)
       return true
+    else
+      self.last_notification_message = "This is not a valid move."
+      return false
     end
   end
 
@@ -222,6 +225,9 @@ class Chess
 
     # Increment piece's move counter
     piece.moves_done += 1
+
+    # Set game message
+    self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} has taken the #{opponents_piece.color} #{opponents_piece.class.name.downcase}."
   end
 
   # Move piece on the board
