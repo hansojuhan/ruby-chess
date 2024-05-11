@@ -13,7 +13,7 @@ class Chess
     @board = Array.new(8) { Array.new(8) }
 
     # History containing all game moves done
-    @history = [["e3",nil]]
+    @history = []#[["e3",nil]]
     
     # Current move
     @current_move = nil
@@ -256,7 +256,7 @@ class Chess
     # set_piece(Pawn.new(:white),["b", 2])
     # set_piece(Pawn.new(:white),["c", 2])
     # set_piece(Pawn.new(:white),["d", 2])
-    set_piece(Pawn.new(:white),["e", 5])
+    set_piece(Pawn.new(:white),["e", 6])
     # set_piece(Pawn.new(:white),["f", 2])
     # set_piece(Pawn.new(:white),["g", 2])
     # set_piece(Pawn.new(:white),["h", 2])
