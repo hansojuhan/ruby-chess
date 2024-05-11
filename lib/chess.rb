@@ -13,7 +13,17 @@ class Chess
     @board = Array.new(8) { Array.new(8) }
 
     # History containing all game moves done
-    @history = []
+    @history = [["e3",nil]]
+    
+    # Current move
+    @current_move = nil
+  end
+
+  # Getter for current move
+  def current_move
+    # If history is empty (new game) or last turn was finished, white
+    # Otherwise black
+    (history.empty? || (history[-1][0] && history[-1][1])) ? :white : :black 
   end
   
   # def get_piece(coordinates)
@@ -60,6 +70,8 @@ class Chess
     print "    0  1  2  3  4  5  6  7\n\n"
     # print "    a  b  c  d  e  f  g  h\n\n" TODO
 
+    # Render current move
+    print "Current move: #{current_move}\n"
     render_history
   end
 
