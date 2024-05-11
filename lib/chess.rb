@@ -3,7 +3,7 @@ require_relative 'chess_pieces'
 
 class Chess
   attr_reader :board
-  attr_accessor :history
+  attr_accessor :history, :last_notification_message
 
   # Chess board rows
   ROWS = 'abcdefgh'
@@ -17,6 +17,9 @@ class Chess
     
     # Current move
     @current_move = nil
+
+    # Variable to save the most recent error/notification message
+    @last_notification_message = ""
   end
 
   # Getter for current move
@@ -51,6 +54,20 @@ class Chess
   def render_board
 
     print `clear`
+
+    print "\n"
+
+    # Render current move
+    print "Current move: #{current_move}\n"
+
+    # Show the last game message
+    unless last_notification_message.empty?
+      print "NB: #{last_notification_message}\n" 
+      self.last_notification_message = ""
+    else
+      print "\n"
+    end
+
     print "\n"
 
     board.each_with_index do |row, row_number|
@@ -70,8 +87,7 @@ class Chess
     print "    0  1  2  3  4  5  6  7\n\n"
     # print "    a  b  c  d  e  f  g  h\n\n" TODO
 
-    # Render current move
-    print "Current move: #{current_move}\n"
+    # Show game history
     render_history
   end
 
@@ -86,13 +102,13 @@ class Chess
 
     # Check if piece was found
     unless piece
-      puts "Choose a piece!" 
+      self.last_notification_message = "Choose a #{current_move} piece on the board!" 
       return false
     end
 
     # Check if found piece is the same color as current move
     unless piece.color == current_move
-      puts "It's #{current_move} turn! Choose the right piece"
+      self.last_notification_message = "It's #{current_move} turn! Choose the right piece."
       return false
     end
 
@@ -112,14 +128,15 @@ class Chess
     end
   end
 
+  # Render game turn history per round
   def render_history
     history.each_with_index do |round, round_number|
       print "#{round_number + 1}) #{round[0]},\t#{round[1]}\n"
     end
   end
 
+  # Writes up history in chess algebraic notation
   def update_history(piece, opponents_piece = nil, origin, destination)
-    # Writes up history in chess algebraic notation
     # Rules:
     # 1. To write a move, give name of piece and destination square. 
     # 2. If piece captured, include x for "captures" before the destination square.
@@ -179,6 +196,7 @@ class Chess
     end
   end
 
+  # Takes in array coordinates [1, 3] and outputs chess notation "d7"
   def coordinates_to_string(coordinates)
     # Input will be [1, 3] (row, column)
     output = ""
@@ -189,6 +207,7 @@ class Chess
     return output
   end
 
+  # Take an opponent's piece and move piece to that place
   def take_piece(piece, opponents_piece, origin, destination)
     # What to do to take
     
@@ -205,6 +224,7 @@ class Chess
     piece.moves_done += 1
   end
 
+  # Move piece on the board
   def move_piece(piece, origin, destination)
     # Need to move piece into the array position at destination
     board[destination[0]][destination[1]] = piece
@@ -214,10 +234,12 @@ class Chess
     piece.moves_done += 1
   end
 
+  # Get piece from board array
   def get_piece_basic(array)
     board[array[0]][array[1]]
   end
 
+  # Set pieces on board in starting position and reset history
   def start_new_game
     # To start a new game, black and white pieces have to be
     # generated and put on the board, move history needs to 
