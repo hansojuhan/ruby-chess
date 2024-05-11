@@ -25,32 +25,73 @@ class Chess
     @last_notification_message = ""
   end
 
+  def print_intro_screen
+    print `clear`
+    print"\nWelcome to Chess!\n---\nCreated by hje\nMay 2024\n\n(N) New game\t\t(L) Load game\t\t(Q) Quit\n\nChoose: "
+  end
+  
+  def main_menu
+    loop do
+      # Ask user to load game, if they wish
+      print_intro_screen
+
+      # Get choice
+      choice = gets.chomp
+      choice = choice.downcase
+
+      # Make actions based on choice
+      if ["q","quit","quit game"].include?(choice)
+        
+        print `clear`
+        puts "Ciao!"
+        exit(true)
+        
+      # elsif ["l","load","load game"].include?(choice)
+
+      #   load_game
+      #   return
+
+      elsif ["n","new","new game"].include?(choice)
+
+        start_new_game
+        return
+
+      end
+    end
+  end
+
+  def start
+    #Start with main menu
+    main_menu
+
+    # Game loop
+    game_over = false
+    while !game_over do
+      
+      render_board
+      
+      make_move
+      # input = get_input
+      # # Let the user guess
+      # if input == "save"
+      #   # Save the game
+      #   save_game
+
+      #   # Finish game
+      #   game_over = true
+      # end
+
+      if game_over?
+        # To do
+      end
+    end
+  end
+
   # Getter for current move
   def current_move
     # If history is empty (new game) or last turn was finished, white
     # Otherwise black
     (history.empty? || (history[-1][0] && history[-1][1])) ? :white : :black 
-  end
-  
-  # def get_piece(coordinates)
-  #   @board[8 - coordinates[1].to_i][ROWS.index(coordinates[0])]
-  # end
-
-#   def set_piece(piece, destination)
-#     # Input will be an array [6, 1], so it's easy
-#     self.board[destination[0]][destination[1]] = piece
-
-# binding.pry
-#     puts "asdf"
-#   end
-
-
-  def set_piece(piece, coordinates)
-    # Parse coordinates both as letters or numbers
-    board_column = ROWS.index(coordinates[0])
-    board_row = 8 - coordinates[1].to_i
-
-    @board[board_row][board_column] = piece
   end
 
   # Render the current state of the @board with letters and numbers
@@ -143,6 +184,15 @@ class Chess
       self.last_notification_message = "This is not a valid move."
       return false
     end
+  end
+  
+  private
+  def set_piece(piece, coordinates)
+    # Parse coordinates both as letters or numbers
+    board_column = ROWS.index(coordinates[0])
+    board_row = 8 - coordinates[1].to_i
+
+    @board[board_row][board_column] = piece
   end
 
   # Render game turn history per round
@@ -309,7 +359,6 @@ class Chess
     self.history = []
   end
 
-  private
   def parse_input_basic_array(query_text)
     input_gotten = false
     until input_gotten do
@@ -356,16 +405,15 @@ class Chess
       end
     end
   end
-
 end
 
 game = Chess.new
+game.start
 
-game.start_new_game
-game.render_board
-
-move_made = false
-while !move_made do
-  game.make_move
-  game.render_board
-end
+# Objective
+# Make the game engine
+# From outside, you should only call game.start
+# After that, you get the options to start new game or load game or quit
+# If start game is clicked, the game initialises
+# and starts the game engine, which is a loop until game over is reached
+# Loop consists of make move and render board
