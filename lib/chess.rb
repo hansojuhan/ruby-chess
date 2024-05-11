@@ -8,6 +8,9 @@ class Chess
   # Chess board rows
   ROWS = 'abcdefgh'
 
+  # Test mode (use array coordinates, not notation)
+  TESTMODE = false
+
   def initialize
     # Initialise the board as an 8x8 array
     @board = Array.new(8) { Array.new(8) }
@@ -92,14 +95,20 @@ class Chess
   end
 
   def make_move
-    # Get two coordinates:
-    origin = parse_input_basic_array "From:"
-    destination = parse_input_basic_array "To:"
-
+    if TESTMODE
+      # Get coordinates from array positions:
+      origin = parse_input_basic_array "From:"
+      destination = parse_input_basic_array "To:"
+    else
+      # Get two coordinates from algebraic notation:
+      origin = parse_input "From:"
+      destination = parse_input "To:"
+    end  
+    
     # Find piece
     piece = get_piece_basic(origin)
     opponents_piece = get_piece_basic(destination)
-
+    
     # Check if piece was found
     unless piece
       self.last_notification_message = "Choose a #{current_move} piece on the board!" 
@@ -326,7 +335,12 @@ class Chess
 
       if input.length == 2 && ('abcdefgh').include?(input[0]) && input[1].to_i.between?(1,8)
         result = input.split("")
-        result[1] = result[1].to_i
+
+        # Translate to array coordinates
+        result.insert(0, result.delete_at(1))
+        result[0] = 8 - result[0].to_i
+        result[1] = ('abcdefgh').index(result[1])
+
         return result
       else
         render_board
@@ -341,15 +355,8 @@ game = Chess.new
 game.start_new_game
 game.render_board
 
-game.current_move
-
 move_made = false
 while !move_made do
   game.make_move
   game.render_board
 end
-# loop do
-# end
-
-# Idea: save the last error message in a variable and show it
-# Currently render board will remove it immediately.
