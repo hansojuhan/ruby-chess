@@ -72,7 +72,7 @@ class Chess
 
     board.each_with_index do |row, row_number|
       # Print row numbers
-      print " #{row_number} "
+      print "#{8 - row_number} (#{row_number}) "
       # print " #{8 - row_number} " TODO
 
       # If square is nil, print out dot, if object, print out object's symbol
@@ -84,8 +84,8 @@ class Chess
     end
 
     # Letters underneath
-    print "    0  1  2  3  4  5  6  7\n\n"
-    # print "    a  b  c  d  e  f  g  h\n\n" TODO
+    print "       0  1  2  3  4  5  6  7\n"
+    print "       a  b  c  d  e  f  g  h\n\n"
 
     # Show game history
     render_history
