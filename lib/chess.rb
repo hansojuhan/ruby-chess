@@ -9,7 +9,7 @@ class Chess
   ROWS = 'abcdefgh'
 
   # Test mode (use array coordinates, not notation)
-  TESTMODE = false
+  TESTMODE = true
 
   def initialize
     # Initialise the board as an 8x8 array
@@ -25,32 +25,73 @@ class Chess
     @last_notification_message = ""
   end
 
+  def print_intro_screen
+    print `clear`
+    print"\nWelcome to Chess!\n---\nCreated by hje\nMay 2024\n\n(N) New game\t\t(L) Load game\t\t(Q) Quit\n\nChoose: "
+  end
+  
+  def main_menu
+    loop do
+      # Ask user to load game, if they wish
+      print_intro_screen
+
+      # Get choice
+      choice = gets.chomp
+      choice = choice.downcase
+
+      # Make actions based on choice
+      if ["q","quit","quit game"].include?(choice)
+        
+        print `clear`
+        puts "Ciao!"
+        exit(true)
+        
+      # elsif ["l","load","load game"].include?(choice)
+
+      #   load_game
+      #   return
+
+      elsif ["n","new","new game"].include?(choice)
+
+        initialize_game
+        return
+
+      end
+    end
+  end
+
+  def start
+    #Start with main menu
+    main_menu
+
+    # Game loop
+    game_over = false
+    while !game_over do
+      
+      render_board
+      
+      make_move
+      # input = get_input
+      # # Let the user guess
+      # if input == "save"
+      #   # Save the game
+      #   save_game
+
+      #   # Finish game
+      #   game_over = true
+      # end
+
+      # if game_over?
+      #   # To do
+      # end
+    end
+  end
+
   # Getter for current move
   def current_move
     # If history is empty (new game) or last turn was finished, white
     # Otherwise black
     (history.empty? || (history[-1][0] && history[-1][1])) ? :white : :black 
-  end
-  
-  # def get_piece(coordinates)
-  #   @board[8 - coordinates[1].to_i][ROWS.index(coordinates[0])]
-  # end
-
-#   def set_piece(piece, destination)
-#     # Input will be an array [6, 1], so it's easy
-#     self.board[destination[0]][destination[1]] = piece
-
-# binding.pry
-#     puts "asdf"
-#   end
-
-
-  def set_piece(piece, coordinates)
-    # Parse coordinates both as letters or numbers
-    board_column = ROWS.index(coordinates[0])
-    board_row = 8 - coordinates[1].to_i
-
-    @board[board_row][board_column] = piece
   end
 
   # Render the current state of the @board with letters and numbers
@@ -94,6 +135,7 @@ class Chess
     if TESTMODE
       print "        0  1  2  3  4  5  6  7\n" 
       print "        a  b  c  d  e  f  g  h\n\n"
+      # p board
     else
       print "    a  b  c  d  e  f  g  h\n\n"
     end
@@ -143,6 +185,15 @@ class Chess
       self.last_notification_message = "This is not a valid move."
       return false
     end
+  end
+  
+  private
+  def set_piece(piece, coordinates)
+    # Parse coordinates both as letters or numbers
+    board_column = ROWS.index(coordinates[0])
+    board_row = 8 - coordinates[1].to_i
+
+    @board[board_row][board_column] = piece
   end
 
   # Render game turn history per round
@@ -262,54 +313,53 @@ class Chess
   end
 
   # Set pieces on board in starting position and reset history
-  def start_new_game
+  def initialize_game
     # To start a new game, black and white pieces have to be
     # generated and put on the board, move history needs to 
     # be reset.
 
     # Start with white
-    set_piece(Pawn.new(:white),["a", 2])
-    set_piece(Pawn.new(:white),["b", 2])
-    set_piece(Pawn.new(:white),["c", 2])
-    set_piece(Pawn.new(:white),["d", 2])
-    set_piece(Pawn.new(:white),["e", 2])
+    # set_piece(Pawn.new(:white),["a", 2])
+    # set_piece(Pawn.new(:white),["b", 2])
+    # set_piece(Pawn.new(:white),["c", 2])
+    # set_piece(Pawn.new(:white),["d", 2])
+    # set_piece(Pawn.new(:white),["e", 2])
     set_piece(Pawn.new(:white),["f", 2])
-    set_piece(Pawn.new(:white),["g", 2])
-    set_piece(Pawn.new(:white),["h", 2])
+    # set_piece(Pawn.new(:white),["g", 2])
+    # set_piece(Pawn.new(:white),["h", 2])
 
     set_piece(Rook.new(:white),["a",1])
-    set_piece(Knight.new(:white),["b",1])
-    set_piece(Bishop.new(:white),["c",1])
-    set_piece(Queen.new(:white),["d",1])
-    set_piece(King.new(:white),["e",1])
-    set_piece(Bishop.new(:white),["f",1])
-    set_piece(Knight.new(:white),["g",1])
-    set_piece(Rook.new(:white),["h",1])
+    # set_piece(Knight.new(:white),["b",1])
+    # set_piece(Bishop.new(:white),["c",1])
+    # set_piece(Queen.new(:white),["d",1])
+    # set_piece(King.new(:white),["e",1])
+    # set_piece(Bishop.new(:white),["f",1])
+    # set_piece(Knight.new(:white),["g",1])
+    # set_piece(Rook.new(:white),["h",1])
 
     # Then black
-    set_piece(Pawn.new(:black),["a", 7])
-    set_piece(Pawn.new(:black),["b", 7])
-    set_piece(Pawn.new(:black),["c", 7])
-    set_piece(Pawn.new(:black),["d", 7])
-    set_piece(Pawn.new(:black),["e", 7])
+    # set_piece(Pawn.new(:black),["a", 7])
+    # set_piece(Pawn.new(:black),["b", 7])
+    # set_piece(Pawn.new(:black),["c", 7])
+    # set_piece(Pawn.new(:black),["d", 7])
+    # set_piece(Pawn.new(:black),["e", 7])
     set_piece(Pawn.new(:black),["f", 7])
-    set_piece(Pawn.new(:black),["g", 7])
-    set_piece(Pawn.new(:black),["h", 7])
+    # set_piece(Pawn.new(:black),["g", 7])
+    # set_piece(Pawn.new(:black),["h", 7])
 
-    set_piece(Rook.new(:black),["a",8])
+    # set_piece(Rook.new(:black),["a",8])
+    # set_piece(Knight.new(:black),["b",8])
+    # set_piece(Bishop.new(:black),["c",8])
+    # set_piece(Queen.new(:black),["d",8])
+    # set_piece(King.new(:black),["e",8])
+    # set_piece(Bishop.new(:black),["f",8])
+    # set_piece(Knight.new(:black),["g",8])
     set_piece(Rook.new(:black),["h",8])
-    set_piece(Knight.new(:black),["b",8])
-    set_piece(Knight.new(:black),["g",8])
-    set_piece(Bishop.new(:black),["f",8])
-    set_piece(Bishop.new(:black),["c",8])
-    set_piece(Queen.new(:black),["d",8])
-    set_piece(King.new(:black),["e",8])
 
     # Reset history
     self.history = []
   end
 
-  private
   def parse_input_basic_array(query_text)
     input_gotten = false
     until input_gotten do
@@ -356,16 +406,15 @@ class Chess
       end
     end
   end
-
 end
 
 game = Chess.new
+game.start
 
-game.start_new_game
-game.render_board
-
-move_made = false
-while !move_made do
-  game.make_move
-  game.render_board
-end
+# Objective
+# Make the game engine
+# From outside, you should only call game.start
+# After that, you get the options to start new game or load game or quit
+# If start game is clicked, the game initialises
+# and starts the game engine, which is a loop until game over is reached
+# Loop consists of make move and render board
