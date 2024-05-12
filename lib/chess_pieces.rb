@@ -30,7 +30,7 @@ class ChessPiece
     pawn: ""
   }
 
-  def initialize(color)
+  def initialize(color = :white)
     @color = color
     @symbol = CHESS_SYMBOLS[@color][self.class.name.downcase.to_sym]
 
@@ -43,14 +43,14 @@ class ChessPiece
     # Status, piece is alive or taken
     @taken = false
   end
-end
 
-class Pawn < ChessPiece
   # Get move direction: white decrements row, black increments row
   def move_direction(number) 
     self.color == :white ? -number : number
   end
+end
 
+class Pawn < ChessPiece
   # Check if pawn can make this move
   def valid_move?(board, origin, destination)
 
@@ -87,13 +87,78 @@ class Pawn < ChessPiece
   end
 end
 
+class Rook < ChessPiece
+  def valid_move?(board, origin, destination)
+    # 1.1. Moves in a straight line, horizontally or vertically.
+    # If one coordinate is same and other is different, movement is a straight line
+    if destination[0] == origin[0] && destination[1] != origin[1]
+      # Horizontal movement
+
+      # 1.2. Squares between start and end must be empty.
+      # Iterate over the squares between origin and destination, checking all of them are nil
+
+      # Sort the range to be smallest->largest, because otherwise #all? will not work
+      start_square, end_square = [origin[1], destination[1]].sort
+
+      # Exclude the destination square for now
+      if ((start_square+1...end_square).all? { |square| board[origin[0]][square] == nil })
+
+        # 1.3. If an opponent piece is on the end square, it is taken
+        # If destination contains a piece (is not nil), check its color
+        unless board[destination[0]][destination[1]].nil?
+
+          # Return true if color is different
+          if board[destination[0]][destination[1]].color != self.color
+            return true
+          else
+            return false
+          end
+
+        else
+          return true
+        end
+      end
+      
+    elsif destination[0] != origin[0] && destination[1] == origin[1]
+      # Vertical movement
+
+      # 1.2. Squares between start and end must be empty.
+
+      start_square, end_square = [origin[0], destination[0]].sort
+
+      # Iterate over the squares between origin and destination, checking all of them are nil
+      if ((start_square+1...end_square).all? { |square| board[square][origin[1]] == nil })
+
+        unless board[destination[0]][destination[1]].nil?
+
+          # Return true if color is different
+          if board[destination[0]][destination[1]].color != self.color
+            return true
+          else
+            return false
+          end
+
+        else
+          return true
+        end
+
+        # 1.3. If an opponent piece is on the end square, it is taken.
+        if board[destination[0]][destination[1]].color != self.color
+          return true
+        else
+          return false
+        end
+      end
+    end
+
+    return false
+  end
+end
+
 class Knight < ChessPiece
 end
 
 class Bishop < ChessPiece
-end
-
-class Rook < ChessPiece
 end
 
 class Queen < ChessPiece
