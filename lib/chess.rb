@@ -98,10 +98,6 @@ class Chess
   def render_board
 
     print `clear`
-    
-    # Show game history
-    render_history
-
     print "\n"
 
     # Render current move
@@ -139,6 +135,9 @@ class Chess
     else
       print "    a  b  c  d  e  f  g  h\n\n"
     end
+        
+    # Show game history
+    render_history
   end
 
   def make_move
@@ -333,7 +332,7 @@ class Chess
     # set_piece(Bishop.new(:white),["c",1])
     # set_piece(Queen.new(:white),["d",1])
     # set_piece(King.new(:white),["e",1])
-    # set_piece(Bishop.new(:white),["f",1])
+    set_piece(Bishop.new(:white),["f",1])
     # set_piece(Knight.new(:white),["g",1])
     # set_piece(Rook.new(:white),["h",1])
 
@@ -349,7 +348,7 @@ class Chess
 
     # set_piece(Rook.new(:black),["a",8])
     # set_piece(Knight.new(:black),["b",8])
-    # set_piece(Bishop.new(:black),["c",8])
+    set_piece(Bishop.new(:black),["c",8])
     # set_piece(Queen.new(:black),["d",8])
     # set_piece(King.new(:black),["e",8])
     # set_piece(Bishop.new(:black),["f",8])
@@ -408,8 +407,8 @@ class Chess
   end
 end
 
-game = Chess.new
-game.start
+# game = Chess.new
+# game.start
 
 # Objective
 # Make the game engine
