@@ -155,10 +155,96 @@ class Rook < ChessPiece
   end
 end
 
-class Knight < ChessPiece
+class Bishop < ChessPiece
+
+  def all_squares_nil?(board, origin, destination, x_increment, y_increment)
+
+    x, y = origin[0], origin[1]
+
+    while x != destination[0] && y != destination[1] do
+
+      unless board[x][y].nil? # Exclude origin square
+        return false unless (x == origin[0] && y == origin[1])
+      end
+
+      x, y = x + x_increment, y + y_increment
+    end
+
+    return true
+  end
+
+  def movement_diagonal?(origin, destination)
+    origin[1] - origin[0] == destination[1] - destination[0] || origin[0] + origin[1] == destination[0] + destination[1]
+  end
+
+  def diagonal_move_valid?(board, origin, destination)
+
+    x1, y1 = origin[0], origin[1]
+    x2, y2 = destination[0], destination[1]
+
+    x_increment = 1
+    y_increment = 1
+
+    # Find the diagonal
+    case 
+    when x1 < x2 && y1 < y2 # Down right
+      # x+1 y+1
+    when x1 > x2 && y1 > y2 # Up left
+      # x-1 y-1
+      x_increment = -1
+      y_increment = -1
+    when x1 < x2 && y1 > y2 # Down left
+      # x+1 y-1
+      # x_increment = 1
+      y_increment = -1
+    when x1 > x2 && y1 < y2 # Up right
+      # x-1 y+1
+      x_increment = -1
+      # y_increment = 1
+    end
+
+    return all_squares_nil?(board, origin, destination, x_increment, y_increment)
+  end
+
+  def opponent_piece?(board, coordinates)
+    board[coordinates[0]][coordinates[1]].color != self.color
+  end
+
+  def square_empty?(board, coordinates)
+    board[coordinates[0]][coordinates[1]].nil?
+  end
+
+  def valid_move?(board, origin, destination)
+    # 1.1. Moves in diagonal lines.
+    # 1.2. Cannot jump over other pieces.
+    # 1.3. If an opponent piece is on the end square, it is taken.
+
+    # If movement is not diagonal, return false immediately
+    return false unless movement_diagonal?(origin, destination)
+
+    if diagonal_move_valid?(board, origin, destination)
+
+        # If destination contains a piece (is not nil), check its color
+        unless square_empty?(board, destination)
+
+          # Return true if color is different
+          if opponent_piece?(board, destination)
+            return true
+          else
+            return false
+          end
+
+        else
+          return true
+        end
+
+    end
+      
+    return false
+  end
 end
 
-class Bishop < ChessPiece
+class Knight < ChessPiece
 end
 
 class Queen < ChessPiece
