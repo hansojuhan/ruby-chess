@@ -48,6 +48,105 @@ class ChessPiece
   def move_direction(number) 
     self.color == :white ? -number : number
   end
+
+  # Iterate over squares between origin and destination
+  # according to movement type
+  # And return true if squares are empty
+  def all_squares_nil?(board, origin, destination)
+
+    # Set increments
+    x_increment, y_increment = set_increments(origin, destination)
+
+    # Start with the orgin square with coordinates x,y
+    x, y = origin[0], origin[1]
+
+    # Iterate over squares until destination
+    until x == destination[0] && y == destination[1] do
+
+      # If a square is not nil, there is a piece in the way (return false)
+      unless board[x][y].nil? 
+        return false unless (x == origin[0] && y == origin[1]) # Exclude origin
+      end
+
+      # Continue incrementing
+      x, y = x + x_increment, y + y_increment
+    end
+
+    # All squares were nil, return true
+    return true
+  end
+
+  # Return true if there's a diagonal between origin and destination
+  def movement_diagonal?(origin, destination)
+    origin[1] - origin[0] == destination[1] - destination[0] || origin[0] + origin[1] == destination[0] + destination[1]
+  end
+
+  # Return true if there's a line between origin and destination
+  def movement_orthogonal?(origin, destination)
+    destination[0] == origin[0] && destination[1] != origin[1] || destination[0] != origin[0] && destination[1] == origin[1]
+  end
+  
+  def opponent_piece?(board, coordinates)
+    board[coordinates[0]][coordinates[1]].color != self.color
+  end
+
+  def square_empty?(board, coordinates)
+    board[coordinates[0]][coordinates[1]].nil?
+  end
+
+  def set_increments(origin, destination)
+
+    x1, y1 = origin[0], origin[1]
+    x2, y2 = destination[0], destination[1]
+
+    # Find the type of movement
+    if movement_orthogonal?(origin, destination)
+      case 
+      when x1 == x2 && y1 < y2 # Line horizontal to the right
+        x_increment = 0
+        y_increment = 1
+      when x1 == x2 && y1 > y2 # Line horizontal to the left
+        x_increment = 0
+        y_increment = -1
+      when x1 > x2 && y1 == y2 # Line vertical up
+        x_increment = -1
+        y_increment = 0
+      when x1 < x2 && y1 == y2 # Line vertical down
+        x_increment = 1
+        y_increment = 0
+      end
+    elsif movement_diagonal?(origin, destination)
+      case
+      when x1 < x2 && y1 < y2 # Diagonal Down right
+        x_increment = 1
+        y_increment = 1
+      when x1 > x2 && y1 > y2 # Diagonal Up left
+        x_increment = -1
+        y_increment = -1
+      when x1 < x2 && y1 > y2 # Diagonal Down left
+        x_increment = 1
+        y_increment = -1
+      when x1 > x2 && y1 < y2 # Diagonal Up right
+        x_increment = -1
+        y_increment = 1
+      end
+    end
+    
+    return x_increment, y_increment
+  end
+
+  def validate_move(board, origin, destination)
+      # Check if all squares in the movement are empty
+      if all_squares_nil?(board, origin, destination)
+        # If destination contains a piece (is not nil), check its color
+        unless square_empty?(board, destination)
+          # Return true if color is different
+          return true if opponent_piece?(board, destination)
+        else
+          return true
+        end
+    end
+  end
 end
 
 class Pawn < ChessPiece
@@ -89,158 +188,38 @@ end
 
 class Rook < ChessPiece
   def valid_move?(board, origin, destination)
-    # 1.1. Moves in a straight line, horizontally or vertically.
-    # If one coordinate is same and other is different, movement is a straight line
-    if destination[0] == origin[0] && destination[1] != origin[1]
-      # Horizontal movement
+    # 1.1. Moves in diagonal lines.
+    # 1.2. Cannot jump over other pieces.
+    # 1.3. If an opponent piece is on the end square, it is taken.
 
-      # 1.2. Squares between start and end must be empty.
-      # Iterate over the squares between origin and destination, checking all of them are nil
+    # If movement is not orthogonal (in lines), return false
+    return false unless movement_orthogonal?(origin, destination)
 
-      # Sort the range to be smallest->largest, because otherwise #all? will not work
-      start_square, end_square = [origin[1], destination[1]].sort
-
-      # Exclude the destination square for now
-      if ((start_square+1...end_square).all? { |square| board[origin[0]][square] == nil })
-
-        # 1.3. If an opponent piece is on the end square, it is taken
-        # If destination contains a piece (is not nil), check its color
-        unless board[destination[0]][destination[1]].nil?
-
-          # Return true if color is different
-          if board[destination[0]][destination[1]].color != self.color
-            return true
-          else
-            return false
-          end
-
-        else
-          return true
-        end
-      end
-      
-    elsif destination[0] != origin[0] && destination[1] == origin[1]
-      # Vertical movement
-
-      # 1.2. Squares between start and end must be empty.
-
-      start_square, end_square = [origin[0], destination[0]].sort
-
-      # Iterate over the squares between origin and destination, checking all of them are nil
-      if ((start_square+1...end_square).all? { |square| board[square][origin[1]] == nil })
-
-        unless board[destination[0]][destination[1]].nil?
-
-          # Return true if color is different
-          if board[destination[0]][destination[1]].color != self.color
-            return true
-          else
-            return false
-          end
-
-        else
-          return true
-        end
-
-        # 1.3. If an opponent piece is on the end square, it is taken.
-        if board[destination[0]][destination[1]].color != self.color
-          return true
-        else
-          return false
-        end
-      end
+    # Check other rules
+    if validate_move(board, origin, destination)
+      return true
+    else
+      return false
     end
-
-    return false
   end
+
 end
 
 class Bishop < ChessPiece
-
-  def all_squares_nil?(board, origin, destination, x_increment, y_increment)
-
-    x, y = origin[0], origin[1]
-
-    while x != destination[0] && y != destination[1] do
-
-      unless board[x][y].nil? # Exclude origin square
-        return false unless (x == origin[0] && y == origin[1])
-      end
-
-      x, y = x + x_increment, y + y_increment
-    end
-
-    return true
-  end
-
-  def movement_diagonal?(origin, destination)
-    origin[1] - origin[0] == destination[1] - destination[0] || origin[0] + origin[1] == destination[0] + destination[1]
-  end
-
-  def diagonal_move_valid?(board, origin, destination)
-
-    x1, y1 = origin[0], origin[1]
-    x2, y2 = destination[0], destination[1]
-
-    x_increment = 1
-    y_increment = 1
-
-    # Find the diagonal
-    case 
-    when x1 < x2 && y1 < y2 # Down right
-      # x+1 y+1
-    when x1 > x2 && y1 > y2 # Up left
-      # x-1 y-1
-      x_increment = -1
-      y_increment = -1
-    when x1 < x2 && y1 > y2 # Down left
-      # x+1 y-1
-      # x_increment = 1
-      y_increment = -1
-    when x1 > x2 && y1 < y2 # Up right
-      # x-1 y+1
-      x_increment = -1
-      # y_increment = 1
-    end
-
-    return all_squares_nil?(board, origin, destination, x_increment, y_increment)
-  end
-
-  def opponent_piece?(board, coordinates)
-    board[coordinates[0]][coordinates[1]].color != self.color
-  end
-
-  def square_empty?(board, coordinates)
-    board[coordinates[0]][coordinates[1]].nil?
-  end
-
   def valid_move?(board, origin, destination)
     # 1.1. Moves in diagonal lines.
     # 1.2. Cannot jump over other pieces.
     # 1.3. If an opponent piece is on the end square, it is taken.
 
-    # If movement is not diagonal, return false immediately
+    # If movement is not diagonal, return false
     return false unless movement_diagonal?(origin, destination)
 
-    if diagonal_move_valid?(board, origin, destination)
-
-        # If destination contains a piece (is not nil), check its color
-        unless square_empty?(board, destination)
-
-          # Return true if color is different
-          if opponent_piece?(board, destination)
-            return true
-          else
-            return false
-          end
-
-        else
-          return true
-        end
-
+    # Check other rules
+    if validate_move(board, origin, destination)
+      return true
+    else
+      return false
     end
-      
-    return false
   end
 end
 
