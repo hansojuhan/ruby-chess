@@ -202,7 +202,6 @@ class Rook < ChessPiece
       return false
     end
   end
-
 end
 
 class Bishop < ChessPiece
@@ -227,6 +226,20 @@ class Knight < ChessPiece
 end
 
 class Queen < ChessPiece
+  def valid_move?(board, origin, destination)
+    # 1.1. Moves straight and in diagonal.
+    # 1.2. Cannot jump over other pieces.
+    # 1.3. If an opponent piece is on the end square, it is taken.
+  
+    return false unless movement_diagonal?(origin, destination) || movement_orthogonal?(origin, destination)
+
+    # Check other rules
+    if validate_move(board, origin, destination)
+      return true
+    else
+      return false
+    end
+  end
 end
 
 class King < ChessPiece
