@@ -242,6 +242,57 @@ class Queen < ChessPiece
 end
 
 class Knight < ChessPiece
+  def valid_move?(board, origin, destination)
+    # 1.1. Makes a move constisting of one step straight, then one in diagonal.
+    # 1.2. Knight jumps over other pieces.
+
+    # First check: is the destination out of bounds? If yes, return false
+    return false unless destination_in_bounds?(destination)
+
+    # Then, simply check if destination is one of the allowed movements
+    if allowed_movement?(origin, destination)
+      unless square_empty?(board, destination)
+        return true if opponent_piece?(board, destination)
+      else
+        return true
+      end
+    end
+
+    return false
+  end
+
+  private
+  def destination_in_bounds?(destination)
+    destination[0].between?(0,7) && destination[1].between?(0,7)
+  end
+
+  def allowed_movement?(origin, destination)
+
+    x1, y1 = origin[0], origin[1]
+    x2, y2 = destination[0], destination[1]
+
+    # 8 Positions from origin
+    case 
+    when x1 - 2 == x2 && y1 + 1 == y2
+      return true
+    when x1 - 1 == x2 && y1 + 2 == y2
+      return true
+    when x1 + 1 == x2 && y1 + 2 == y2
+      return true
+    when x1 + 2 == x2 && y1 + 1 == y2
+      return true
+    when x1 + 2 == x2 && y1 - 1 == y2
+      return true
+    when x1 + 1 == x2 && y1 - 2 == y2
+      return true
+    when x1 - 1 == x2 && y1 - 2 == y2
+      return true
+    when x1 - 2 == x2 && y1 - 1 == y2
+      return true
+    else
+      return false
+    end
+  end
 end
 
 class King < ChessPiece
