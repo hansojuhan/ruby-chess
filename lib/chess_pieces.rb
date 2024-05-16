@@ -167,11 +167,13 @@ class Pawn < ChessPiece
     if 
       destination[0] == origin[0] + move_direction(2) && 
       destination[1] == origin[1] && 
-      moves_done == 0 && 
+      moves_done == 0 && # First move
+      board[origin[0] + move_direction(1)][origin[1]].nil? && # No piece in the middle
       board[destination[0]][destination[1]].nil?
 
       return true
     end
+    
 
     # 3. Take: enemy piece is diagonal
     if 
@@ -222,9 +224,6 @@ class Bishop < ChessPiece
   end
 end
 
-class Knight < ChessPiece
-end
-
 class Queen < ChessPiece
   def valid_move?(board, origin, destination)
     # 1.1. Moves straight and in diagonal.
@@ -240,6 +239,9 @@ class Queen < ChessPiece
       return false
     end
   end
+end
+
+class Knight < ChessPiece
 end
 
 class King < ChessPiece

@@ -58,7 +58,7 @@ RSpec.describe '.Pawn' do
 
       it 'two squares returns true for black pawn' do
         # Set pawn
-        pawn = Pawn.new 
+        pawn = Pawn.new(:black)
 
         # Set board
         board = Array.new(8) { Array.new(8) }
@@ -190,13 +190,13 @@ RSpec.describe '.Pawn' do
 
         # Set board
         board = Array.new(8) { Array.new(8) }
-        board[6][0] = pawn
+        board[2][0] = pawn
   
-        board[5][1] = Pawn.new(:white)
+        board[3][1] = Pawn.new(:white)
 
         # Set origin and destination
-        origin = [6,0]
-        destination = [5,1]
+        origin = [2,0]
+        destination = [3,1]
         
         # This should return true, since it's a valid move
         expect(pawn.valid_move?(board, origin, destination)).to be true
