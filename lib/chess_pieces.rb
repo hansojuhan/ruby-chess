@@ -44,6 +44,11 @@ class ChessPiece
     @taken = false
   end
 
+  # Return true if array elements are between 0-7.
+  def destination_in_bounds?(destination)
+    destination[0].between?(0,7) && destination[1].between?(0,7)
+  end
+
   # Get move direction: white decrements row, black increments row
   def move_direction(number) 
     self.color == :white ? -number : number
@@ -262,10 +267,6 @@ class Knight < ChessPiece
   end
 
   private
-  def destination_in_bounds?(destination)
-    destination[0].between?(0,7) && destination[1].between?(0,7)
-  end
-
   def allowed_movement?(origin, destination)
 
     x1, y1 = origin[0], origin[1]
@@ -296,4 +297,37 @@ class Knight < ChessPiece
 end
 
 class King < ChessPiece
+
+  def valid_move?(board, origin, destination)
+    # 1.1. Moves one square in any direction.
+    # 1.2. Special move *castling*:
+    #   1.1.1. The king that makes the castling move has not yet moved in the game.
+    #   1.1.2. The rook that makes the castling move has not yet moved in the game.
+    #   1.1.3. The king is not in check.
+    #   1.1.4. When castling, there may not be an enemy piece that can move to a square that is moved over by the king.
+    #   1.1.5. You may not castle and end the move with the king in check.
+    #   1.1.6. All squares between the rook and king before the castling move are empty.
+    #   1.1.7. King and rook occupy the same row.
+
+    # Check that destination is in bounds
+    return false unless destination_in_bounds?(destination)
+
+    # If yes, check that destination x, y are between origin-1, origin+1
+    if allowed_movement?(origin, destination)
+      unless square_empty?(board, destination)
+        return true if opponent_piece?(board, destination)
+      else
+        return true
+      end
+    end
+
+    return false
+  end
+
+  private
+
+  # Allowed movement for king is around the origin
+  def allowed_movement?(origin, destination)
+    destination[0].between?(origin[0] - 1, origin[0] + 1) && destination[1].between?(origin[1] - 1, origin[1] + 1)
+  end
 end
