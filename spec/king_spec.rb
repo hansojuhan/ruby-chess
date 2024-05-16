@@ -92,5 +92,58 @@ RSpec.describe '.King' do
         expect(king.valid_move?(board, origin, destination)).to be false
       end
     end
+
+    context 'when white king is castling' do
+      xit 'can castle to queen side' do
+        # Set king
+        king = King.new(:white)
+
+        # Set board
+        board = Array.new(8) { Array.new(8) }
+        board[7][4] = king
+        board[7][0] = Rook.new(:white)
+
+        # Set origin and destination
+        origin = [7,4]
+        destination = [7,4]
+        
+        # This should return true, since it's a valid move
+        expect(king.valid_move?(board, origin, destination)).to be true
+      end
+
+      xit 'can castle to queen side 2' do 
+        # Set king
+        king = King.new(:white)
+
+        # Set board
+        board = Array.new(8) { Array.new(8) }
+        board[7][4] = king
+        board[7][0] = Rook.new(:white)
+
+        # Set origin and destination
+        origin = [7,4]
+        destination = [7,4]
+        
+        # This should return true, since it's a valid move
+        expect(king.valid_move?(board, origin, destination)).to be true
+      end
+
+      xit 'can castle to king side' do 
+        # Set king
+        king = King.new(:white)
+
+        # Set board
+        board = Array.new(8) { Array.new(8) }
+        board[7][4] = king
+        board[7][7] = Rook.new(:white)
+
+        # Set origin and destination
+        origin = [7,4]
+        destination = [7,6]
+        
+        # This should return true, since it's a valid move
+        expect(king.valid_move?(board, origin, destination)).to be true
+      end
+    end
   end
 end

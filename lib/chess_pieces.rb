@@ -297,7 +297,6 @@ class Knight < ChessPiece
 end
 
 class King < ChessPiece
-
   def valid_move?(board, origin, destination)
     # 1.1. Moves one square in any direction.
     # 1.2. Special move *castling*:
@@ -312,6 +311,8 @@ class King < ChessPiece
     # Check that destination is in bounds
     return false unless destination_in_bounds?(destination)
 
+    # return true if castle?(board, origin, destination)
+
     # If yes, check that destination x, y are between origin-1, origin+1
     if allowed_movement?(origin, destination)
       unless square_empty?(board, destination)
@@ -325,6 +326,27 @@ class King < ChessPiece
   end
 
   private
+
+  # def castle?(board, origin, destination)
+
+  #   # Check that origin is king and destination is rook first of all
+  #   return false unless board[destination[0]][destination[1]] == Rook
+    
+  #   #   1.1.1. The king that makes the castling move has not yet moved in the game.
+  #   #   1.1.2. The rook that makes the castling move has not yet moved in the game.
+  #   rook = board[destination[0]][destination[1]]
+  #   return false unless self.moves_done == 0 && rook.moves_done == 0
+    
+  #   #   1.1.3. The king is not in check.
+  #   #   1.1.4. When castling, there may not be an enemy piece that can move to a square that is moved over by the king.
+  #   #   1.1.5. You may not castle and end the move with the king in check.
+  #   #   TODO
+    
+  #   #   1.1.6. All squares between the rook and king before the castling move are empty.
+  #   #   1.1.7. King and rook occupy the same row.
+    
+
+  # end
 
   # Allowed movement for king is around the origin
   def allowed_movement?(origin, destination)
