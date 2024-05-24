@@ -1,11 +1,16 @@
 module ChessUtilities
+
+  EXTENSION = ".chess"
+  SAVE_PATH = "/saves"
+  PERMITTED_CLASS = Chess
+
   # Get a name and check it doesn't exist
   def find_valid_save_filename(path)
     name_valid = false
     until name_valid
 
       name = gets.chomp
-      name = name << ".hangman"
+      name = name << EXTENSION
 
       if File.exist?("#{SAVE_PATH}/#{name}")
         print "Save already exists, choose another name: "
@@ -47,13 +52,12 @@ module ChessUtilities
     # Go back to the beginning
     puts "Game saved as '#{name}'. Press any key to go to main menu."
     gets
-    start
   end
 
   def list_saved_games
     puts "\nYour saved games:"
     Dir.foreach("#{SAVE_PATH}") do |savefile|
-      puts savefile.chomp(".hangman") if savefile.include?(".hangman")
+      puts savefile.chomp(EXTENSION) if savefile.include?(EXTENSION)
     end
   end
 
@@ -62,7 +66,7 @@ module ChessUtilities
     until name_valid
 
       name = gets.chomp
-      name = name << ".hangman"
+      name = name << EXTENSION
 
       if File.exist?("#{SAVE_PATH}/#{name}")
         return name
@@ -87,7 +91,7 @@ module ChessUtilities
       lines = File.read(file)
 
       # Safe load the data, permetting the Hangman class only
-      data = YAML.safe_load(lines, permitted_classes: [Hangman])
+      data = YAML.safe_load(lines, permitted_classes: [PERMITTED_CLASS])
     rescue IOError => e
       # Errors
     ensure
@@ -105,9 +109,11 @@ module ChessUtilities
 
   def update_game_state(data)
     # Open and write that into the file
-    @remaining_guesses = data.remaining_guesses
-    @secret_word = data.secret_word
-    @guessed_word = data.guessed_word
-    @last_guess = data.last_guess
+    puts "TODO"
+    gets
+    # @remaining_guesses = data.remaining_guesses
+    # @secret_word = data.secret_word
+    # @guessed_word = data.guessed_word
+    # @last_guess = data.last_guess
   end
 end
