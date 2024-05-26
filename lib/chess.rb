@@ -427,7 +427,7 @@ end
 
     pieces = []
     destination = []
-binding.pry
+
     # Get all pieces on board
     board.each_with_index do |row, row_index|
 
@@ -444,7 +444,7 @@ binding.pry
       end
 
     end
-binding.pry
+
     pieces.each do |piece|
 
       return true if piece[0].valid_move?(board, piece[1], destination)
