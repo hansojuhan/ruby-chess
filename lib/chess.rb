@@ -417,3 +417,52 @@ end
 # If start game is clicked, the game initialises
 # and starts the game engine, which is a loop until game over is reached
 # Loop consists of make move and render board
+
+  def king_checked?(board, color)
+
+    pieces = []
+    destination = []
+binding.pry
+    # Get all pieces on board
+    board.each_with_index do |row, row_index|
+
+      row.each_with_index do |square, column_index|
+        
+        unless square.nil?
+          if square.color != color
+            pieces.push [square, [row_index, column_index]]
+          elsif square.color == color && square.is_a?(King)
+            destination = [row_index, column_index]
+          end
+        end
+
+      end
+
+    end
+binding.pry
+    pieces.each do |piece|
+
+      return true if piece[0].valid_move?(board, piece[1], destination)
+
+    end
+
+    return false
+  end
+# Check
+# Check if current piece can take enemy king
+# If not, check if any pieces can take opponent king
+#   Find all my pieces on the board
+#   Put them in a hash of piece, origin
+#   Opponent king as destination
+#   Iterate through all #valid_move?
+#   If any return true, it's check
+# If yes, update history with the check mark as well
+
+# Opponent turn - turn must end in condition where
+# own king is not checked any more
+# For this, have to again iterate through all pieces
+end
+
+
+game = Chess.new
+game.start
