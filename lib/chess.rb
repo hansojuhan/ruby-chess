@@ -204,7 +204,7 @@ class Chess
   end
 
   # Writes up history in chess algebraic notation
-  def update_history(piece, opponents_piece = nil, origin, destination)
+  def update_history(piece, opponents_piece = nil, origin, destination, check)
     # Rules:
     # 1. To write a move, give name of piece and destination square. 
     # 2. If piece captured, include x for "captures" before the destination square.
@@ -237,8 +237,8 @@ class Chess
     move << 'x' unless opponents_piece.nil?
     # write destination
     move << coordinates_to_string(destination)
-
-    # add +, # in case of check, mate (TODO later)
+    # add +, # in case of check, mate
+    move << '+' if check
 
     # If first move of turn, needs to be added as element 1 of array length 2 into the main array
     # If second move of turn, second element of array length 2
