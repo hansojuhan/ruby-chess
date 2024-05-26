@@ -177,8 +177,13 @@ class Chess
         move_piece(piece, origin, destination)
       end
 
+      # Check if check occured
+      opponent_king_color = current_move == :white ? :black : :white
+      check = king_checked?(board, opponent_king_color)
+      self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} checks #{opponent_king_color} king!" if check
+
       # Finish move, record history
-      update_history(piece, opponents_piece, origin, destination)
+      update_history(piece, opponents_piece, origin, destination, check)
       return true
     else
       self.last_notification_message = "This is not a valid move."
