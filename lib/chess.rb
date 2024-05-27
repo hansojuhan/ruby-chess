@@ -185,10 +185,20 @@ class Chess
 
       # Check if check occured
       opponent_king_color = current_move == :white ? :black : :white
-      self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} checks #{opponent_king_color} king!" if king_checked?(board, opponent_king_color)
+
+      if king_checked?(board, opponent_king_color)
+        if king_checkmated?(board, opponent_king_color)
+          # TODO
+          mate = true
+          self.last_notification_message = "Checkmate!"
+        else
+          check = true
+          self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} checks #{opponent_king_color} king!" if king_checked?(board, opponent_king_color)
+        end
+      end
 
       # Finish move, record history
-      update_history(piece, opponents_piece, origin, destination, check)
+      update_history(piece, opponents_piece, origin, destination, check, mate)
       return true
     else
       self.last_notification_message = "This is not a valid move."
@@ -222,7 +232,7 @@ class Chess
   end
 
   # Writes up history in chess algebraic notation
-  def update_history(piece, opponents_piece = nil, origin, destination, check)
+  def update_history(piece, opponents_piece = nil, origin, destination, check, mate)
     # Rules:
     # 1. To write a move, give name of piece and destination square. 
     # 2. If piece captured, include x for "captures" before the destination square.
@@ -257,6 +267,7 @@ class Chess
     move << coordinates_to_string(destination)
     # add +, # in case of check, mate
     move << '+' if check
+    move << '#' if mate
 
     # empty (first move of the game)
     if history.empty?
@@ -325,14 +336,14 @@ class Chess
 
   # Set pieces on board in starting position and reset history
   def initialize_game
-    set_piece(Pawn.new(:white),["a", 2])
-    set_piece(Pawn.new(:white),["b", 2])
-    set_piece(Pawn.new(:white),["c", 2])
-    set_piece(Pawn.new(:white),["d", 2])
-    set_piece(Pawn.new(:white),["e", 2])
-    set_piece(Pawn.new(:white),["f", 2])
-    set_piece(Pawn.new(:white),["g", 2])
-    set_piece(Pawn.new(:white),["h", 2])
+    # set_piece(Pawn.new(:white),["a", 2])
+    # set_piece(Pawn.new(:white),["b", 2])
+    # set_piece(Pawn.new(:white),["c", 2])
+    # set_piece(Pawn.new(:white),["d", 2])
+    # set_piece(Pawn.new(:white),["e", 2])
+    # set_piece(Pawn.new(:white),["f", 2])
+    # set_piece(Pawn.new(:white),["g", 2])
+    # set_piece(Pawn.new(:white),["h", 2])
 
     set_piece(Rook.new(:white),["a",1])
     set_piece(Knight.new(:white),["b",1])
@@ -343,14 +354,14 @@ class Chess
     set_piece(Knight.new(:white),["g",1])
     set_piece(Rook.new(:white),["h",1])
 
-    set_piece(Pawn.new(:black),["a", 7])
-    set_piece(Pawn.new(:black),["b", 7])
-    set_piece(Pawn.new(:black),["c", 7])
-    set_piece(Pawn.new(:black),["d", 7])
-    set_piece(Pawn.new(:black),["e", 7])
-    set_piece(Pawn.new(:black),["f", 7])
-    set_piece(Pawn.new(:black),["g", 7])
-    set_piece(Pawn.new(:black),["h", 7])
+    # set_piece(Pawn.new(:black),["a", 7])
+    # set_piece(Pawn.new(:black),["b", 7])
+    # set_piece(Pawn.new(:black),["c", 7])
+    # set_piece(Pawn.new(:black),["d", 7])
+    # set_piece(Pawn.new(:black),["e", 7])
+    # set_piece(Pawn.new(:black),["f", 7])
+    # set_piece(Pawn.new(:black),["g", 7])
+    # set_piece(Pawn.new(:black),["h", 7])
 
     set_piece(Rook.new(:black),["a",8])
     set_piece(Knight.new(:black),["b",8])
@@ -431,6 +442,60 @@ class Chess
     end
 
     return false
+  end
+
+  def king_checkmated?(board, color)
+    # Check if king is in check?
+    return false unless king_checked?(board, color)
+    # Generate all legal moves player can make
+    pieces = []
+    # Get all pieces on board
+    board.each_with_index do |row, row_index|
+      row.each_with_index do |square, column_index|
+        unless square.nil?
+          if square.color != color
+            pieces.push [square, [row_index, column_index]]
+          end
+        end
+      end
+    end
+
+    pieces.each do |piece|
+
+      origin = piece[1]
+
+      (0...7).each do |row|
+        (0...7).each do |column|
+
+          destination = [row, column]
+
+          if piece[0].valid_move?(board, origin, destination)
+            
+            return false if simulate_move(board, piece[0], origin, destination, color)
+
+          end
+
+        end
+      end
+      binding.pry
+
+      return true
+    end
+  
+
+
+    # For each legal move, simulate it 
+    # Check if any moves can remove the check
+    # If not, checkmate
+  end
+
+  def simulate_move(board, piece, origin, destination, color)
+    # Deep copy the board
+    local_board = Marshal.load(Marshal.dump(board))
+    # Make hypothetical move
+    move_piece(local_board, piece, origin, destination, false)
+    # Check for check
+    return king_checked?(local_board, color)   
   end
 end
 
