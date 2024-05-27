@@ -197,7 +197,6 @@ class Chess
     end
   end
   
-  private
   def set_piece(piece, coordinates)
     # Parse coordinates both as letters or numbers
     board_column = ROWS.index(coordinates[0])
@@ -341,8 +340,8 @@ class Chess
     set_piece(Rook.new(:white),["a",1])
     # set_piece(Knight.new(:white),["b",1])
     # set_piece(Bishop.new(:white),["c",1])
-    # set_piece(Queen.new(:white),["d",1])
-    # set_piece(King.new(:white),["e",1])
+    set_piece(Queen.new(:white),["d",1])
+    set_piece(King.new(:white),["e",1])
     set_piece(Bishop.new(:white),["f",1])
     # set_piece(Knight.new(:white),["g",1])
     # set_piece(Rook.new(:white),["h",1])
@@ -360,8 +359,8 @@ class Chess
     # set_piece(Rook.new(:black),["a",8])
     # set_piece(Knight.new(:black),["b",8])
     set_piece(Bishop.new(:black),["c",8])
-    # set_piece(Queen.new(:black),["d",8])
-    # set_piece(King.new(:black),["e",8])
+    set_piece(Queen.new(:black),["d",8])
+    set_piece(King.new(:black),["e",8])
     # set_piece(Bishop.new(:black),["f",8])
     # set_piece(Knight.new(:black),["g",8])
     set_piece(Rook.new(:black),["h",8])
@@ -416,7 +415,6 @@ class Chess
       end
     end
   end
-end
 
 # game = Chess.new
 # game.start

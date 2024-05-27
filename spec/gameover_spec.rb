@@ -35,7 +35,6 @@ RSpec.describe 'Gameover' do
         origin = [6,0]
         destination = [6,1]
 
-        binding.pry
         white_rook = chess.get_piece_basic(origin)
         chess.move_piece(white_rook, origin, destination)
 
