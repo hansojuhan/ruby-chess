@@ -170,6 +170,12 @@ class Chess
     # Move it if move is valid
     if !piece.nil? && piece.valid_move?(board, origin, destination)
 
+      # # Check if after move own king is checked, if yes, not valid move 
+      # if king_checked?(board, current_move)
+      #   self.last_notification_message = "Can't move there (check)!"
+      #   return false
+      # end
+
       # If destination includes an opponent's piece, take it, otherwise move
       unless opponents_piece.nil?
         take_piece(piece, opponents_piece, origin, destination)
