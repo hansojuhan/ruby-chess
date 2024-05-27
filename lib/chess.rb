@@ -171,10 +171,6 @@ class Chess
     if !piece.nil? && piece.valid_move?(board, origin, destination)
 
       # # Check if after move own king is checked, if yes, not valid move 
-      # if king_checked?(board, current_move)
-      #   self.last_notification_message = "Can't move there (check)!"
-      #   return false
-      # end
       if own_king_checked?(board, piece, origin, destination, current_move)
         self.last_notification_message = "Can't move there (check)!"
         return false
@@ -189,8 +185,7 @@ class Chess
 
       # Check if check occured
       opponent_king_color = current_move == :white ? :black : :white
-      check = king_checked?(board, opponent_king_color)
-      self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} checks #{opponent_king_color} king!" if check
+      self.last_notification_message = "#{piece.color.capitalize} #{piece.class.name.downcase} checks #{opponent_king_color} king!" if king_checked?(board, opponent_king_color)
 
       # Finish move, record history
       update_history(piece, opponents_piece, origin, destination, check)
@@ -212,10 +207,8 @@ class Chess
   def own_king_checked?(board, piece, origin, destination, color)
     # Deep local copy of the board
     local_board = Marshal.load(Marshal.dump(board))
-
     # Make hypothetical move
     move_piece(local_board, piece, origin, destination, false)
-
     # Check for check
     return king_checked?(local_board, color)    
   end
@@ -240,7 +233,7 @@ class Chess
     # 0-0: kingside castle
     # 0-0-0: queenside castle
     # +: check
-    #: checkmate
+    # #: checkmate
 
     # Pieces:
     #  :  pawn (no symbol)
@@ -265,14 +258,8 @@ class Chess
     # add +, # in case of check, mate
     move << '+' if check
 
-    # If first move of turn, needs to be added as element 1 of array length 2 into the main array
-    # If second move of turn, second element of array length 2
-    # test_array = [["Nc5","f5"],["e4","fxe4"],["Nxe4","Nf6"],["d2",""]]
-
-    # 3 options:
     # empty (first move of the game)
     if history.empty?
-      # Create a new 2-element array
       # Write first move into it and add to history array
       history.push [move, nil]
 
@@ -338,46 +325,40 @@ class Chess
 
   # Set pieces on board in starting position and reset history
   def initialize_game
-    # To start a new game, black and white pieces have to be
-    # generated and put on the board, move history needs to 
-    # be reset.
-
-    # Start with white
-    # set_piece(Pawn.new(:white),["a", 2])
-    # set_piece(Pawn.new(:white),["b", 2])
-    # set_piece(Pawn.new(:white),["c", 2])
-    # set_piece(Pawn.new(:white),["d", 2])
-    # set_piece(Pawn.new(:white),["e", 2])
+    set_piece(Pawn.new(:white),["a", 2])
+    set_piece(Pawn.new(:white),["b", 2])
+    set_piece(Pawn.new(:white),["c", 2])
+    set_piece(Pawn.new(:white),["d", 2])
+    set_piece(Pawn.new(:white),["e", 2])
     set_piece(Pawn.new(:white),["f", 2])
-    # set_piece(Pawn.new(:white),["g", 2])
-    # set_piece(Pawn.new(:white),["h", 2])
+    set_piece(Pawn.new(:white),["g", 2])
+    set_piece(Pawn.new(:white),["h", 2])
 
     set_piece(Rook.new(:white),["a",1])
-    # set_piece(Knight.new(:white),["b",1])
-    # set_piece(Bishop.new(:white),["c",1])
+    set_piece(Knight.new(:white),["b",1])
+    set_piece(Bishop.new(:white),["c",1])
     set_piece(Queen.new(:white),["d",1])
     set_piece(King.new(:white),["e",1])
     set_piece(Bishop.new(:white),["f",1])
-    # set_piece(Knight.new(:white),["g",1])
-    # set_piece(Rook.new(:white),["h",1])
+    set_piece(Knight.new(:white),["g",1])
+    set_piece(Rook.new(:white),["h",1])
 
-    # Then black
-    # set_piece(Pawn.new(:black),["a", 7])
-    # set_piece(Pawn.new(:black),["b", 7])
-    # set_piece(Pawn.new(:black),["c", 7])
-    # set_piece(Pawn.new(:black),["d", 7])
-    # set_piece(Pawn.new(:black),["e", 7])
+    set_piece(Pawn.new(:black),["a", 7])
+    set_piece(Pawn.new(:black),["b", 7])
+    set_piece(Pawn.new(:black),["c", 7])
+    set_piece(Pawn.new(:black),["d", 7])
+    set_piece(Pawn.new(:black),["e", 7])
     set_piece(Pawn.new(:black),["f", 7])
-    # set_piece(Pawn.new(:black),["g", 7])
-    # set_piece(Pawn.new(:black),["h", 7])
+    set_piece(Pawn.new(:black),["g", 7])
+    set_piece(Pawn.new(:black),["h", 7])
 
-    # set_piece(Rook.new(:black),["a",8])
-    # set_piece(Knight.new(:black),["b",8])
+    set_piece(Rook.new(:black),["a",8])
+    set_piece(Knight.new(:black),["b",8])
     set_piece(Bishop.new(:black),["c",8])
     set_piece(Queen.new(:black),["d",8])
     set_piece(King.new(:black),["e",8])
-    # set_piece(Bishop.new(:black),["f",8])
-    # set_piece(Knight.new(:black),["g",8])
+    set_piece(Bishop.new(:black),["f",8])
+    set_piece(Knight.new(:black),["g",8])
     set_piece(Rook.new(:black),["h",8])
 
     # Reset history
@@ -393,11 +374,7 @@ class Chess
 
       if input.length == 2 && input[0].to_i.between?(0,7) && input[1].to_i.between?(0,7)
         result = input.split("")
-
         result = result.map { |e| e.to_i }
-        # temp = result[1]
-        # result[1] = result[0]
-        # result[0] = temp
         return result
       else
         self.last_notification_message = "Choose a #{current_move} piece on the board!"
@@ -431,17 +408,6 @@ class Chess
     end
   end
 
-# game = Chess.new
-# game.start
-
-# Objective
-# Make the game engine
-# From outside, you should only call game.start
-# After that, you get the options to start new game or load game or quit
-# If start game is clicked, the game initialises
-# and starts the game engine, which is a loop until game over is reached
-# Loop consists of make move and render board
-
   def king_checked?(board, color)
 
     pieces = []
@@ -449,9 +415,7 @@ class Chess
 
     # Get all pieces on board
     board.each_with_index do |row, row_index|
-
       row.each_with_index do |square, column_index|
-        
         unless square.nil?
           if square.color != color
             pieces.push [square, [row_index, column_index]]
@@ -459,34 +423,16 @@ class Chess
             destination = [row_index, column_index]
           end
         end
-
       end
-
     end
 
     pieces.each do |piece|
-
       return true if piece[0].valid_move?(board, piece[1], destination)
-
     end
 
     return false
   end
-# Check
-# Check if current piece can take enemy king
-# If not, check if any pieces can take opponent king
-#   Find all my pieces on the board
-#   Put them in a hash of piece, origin
-#   Opponent king as destination
-#   Iterate through all #valid_move?
-#   If any return true, it's check
-# If yes, update history with the check mark as well
-
-# Opponent turn - turn must end in condition where
-# own king is not checked any more
-# For this, have to again iterate through all pieces
 end
-
 
 game = Chess.new
 game.start
