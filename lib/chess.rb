@@ -175,12 +175,16 @@ class Chess
       #   self.last_notification_message = "Can't move there (check)!"
       #   return false
       # end
+      if own_king_checked?(board, piece, origin, destination, current_move)
+        self.last_notification_message = "Can't move there (check)!"
+        return false
+      end
 
       # If destination includes an opponent's piece, take it, otherwise move
       unless opponents_piece.nil?
         take_piece(piece, opponents_piece, origin, destination)
       else
-        move_piece(piece, origin, destination)
+        move_piece(board, piece, origin, destination)
       end
 
       # Check if check occured
@@ -203,6 +207,17 @@ class Chess
     board_row = 8 - coordinates[1].to_i
 
     @board[board_row][board_column] = piece
+  end
+
+  def own_king_checked?(board, piece, origin, destination, color)
+    # Deep local copy of the board
+    local_board = Marshal.load(Marshal.dump(board))
+
+    # Make hypothetical move
+    move_piece(local_board, piece, origin, destination, false)
+
+    # Check for check
+    return king_checked?(local_board, color)    
   end
 
   # Render game turn history per round
@@ -307,13 +322,13 @@ class Chess
   end
 
   # Move piece on the board
-  def move_piece(piece, origin, destination)
+  def move_piece(board, piece, origin, destination, increment_moves = true)
     # Need to move piece into the array position at destination
     board[destination[0]][destination[1]] = piece
     # And remove from origin
     board[origin[0]][origin[1]] = nil
     # Increment piece's own move counter
-    piece.moves_done += 1
+    piece.moves_done += 1 if increment_moves
   end
 
   # Get piece from board array
