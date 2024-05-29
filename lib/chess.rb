@@ -445,15 +445,14 @@ class Chess
   end
 
   def king_checkmated?(board, color)
-    # Check if king is in check?
-    return false unless king_checked?(board, color)
+
     # Generate all legal moves player can make
     pieces = []
     # Get all pieces on board
     board.each_with_index do |row, row_index|
       row.each_with_index do |square, column_index|
         unless square.nil?
-          if square.color != color
+          if square.color == color
             pieces.push [square, [row_index, column_index]]
           end
         end
@@ -471,17 +470,17 @@ class Chess
 
           if piece[0].valid_move?(board, origin, destination)
             
-            return false if simulate_move(board, piece[0], origin, destination, color)
+            return false unless simulate_move(board, piece[0], origin, destination, color)
 
           end
 
         end
       end
-      binding.pry
+      
 
-      return true
     end
-  
+    
+    return true
 
 
     # For each legal move, simulate it 
