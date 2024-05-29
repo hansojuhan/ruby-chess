@@ -407,6 +407,9 @@ class Chess
       print "#{query_text}\t"
       input = gets.chomp
 
+      # Check if input is a command, such as 'quit', 'save'
+      enter_command(input) if input_valid_command?(input)
+
       if input.length == 2 && ('abcdefgh').include?(input[0]) && input[1].to_i.between?(1,8)
         result = input.split("")
 
@@ -420,6 +423,19 @@ class Chess
         self.last_notification_message = "Choose a #{current_move} piece on the board!"
         render_board
       end
+    end
+  end
+
+  def input_valid_command?(input)
+    ["quit","save"].include? input
+  end
+
+  def enter_command(input)
+    case input
+    when 'quit'
+      main_menu
+    when 'save'
+      save_game
     end
   end
 
