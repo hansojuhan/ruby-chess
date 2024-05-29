@@ -3,13 +3,13 @@ require_relative 'chess_pieces'
 
 class Chess
   attr_reader :board
-  attr_accessor :history, :last_notification_message
+  attr_accessor :history, :last_notification_message, :game_over
 
   # Chess board rows
   ROWS = 'abcdefgh'
 
   # Test mode (use array coordinates, not notation)
-  TESTMODE = true
+  TESTMODE = false
 
   def initialize
     # Initialise the board as an 8x8 array
@@ -23,6 +23,9 @@ class Chess
 
     # Variable to save the most recent error/notification message
     @last_notification_message = ""
+
+    # Play until this is true
+    @game_over = false
   end
 
   def print_intro_screen
@@ -65,26 +68,19 @@ class Chess
     main_menu
 
     # Game loop
-    game_over = false
     while !game_over do
       
       render_board
-      
       make_move
-      # input = get_input
-      # # Let the user guess
-      # if input == "save"
-      #   # Save the game
-      #   save_game
 
-      #   # Finish game
-      #   game_over = true
-      # end
-
-      # if game_over?
-      #   # To do
-      # end
+      if game_over 
+        render_board
+        puts "Return to main menu"
+        gets
+        main_menu
+      end
     end
+
   end
 
   # Getter for current move
@@ -131,7 +127,6 @@ class Chess
     if TESTMODE
       print "        0  1  2  3  4  5  6  7\n" 
       print "        a  b  c  d  e  f  g  h\n\n"
-      # p board
     else
       print "    a  b  c  d  e  f  g  h\n\n"
     end
@@ -188,7 +183,9 @@ class Chess
 
       if king_checked?(board, opponent_king_color)
         if king_checkmated?(board, opponent_king_color)
-          # TODO
+          # Game is over
+          self.game_over = true          
+
           mate = true
           self.last_notification_message = "Checkmate!"
         else
@@ -459,6 +456,7 @@ class Chess
       end
     end
 
+    # For each piece, simulate all possible moves and check if check is removed
     pieces.each do |piece|
 
       origin = piece[1]
@@ -469,23 +467,14 @@ class Chess
           destination = [row, column]
 
           if piece[0].valid_move?(board, origin, destination)
-            
             return false unless simulate_move(board, piece[0], origin, destination, color)
-
           end
 
         end
       end
-      
-
     end
     
     return true
-
-
-    # For each legal move, simulate it 
-    # Check if any moves can remove the check
-    # If not, checkmate
   end
 
   def simulate_move(board, piece, origin, destination, color)
