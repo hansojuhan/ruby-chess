@@ -2,8 +2,7 @@ require 'pry-byebug'
 require_relative 'chess_pieces'
 
 class Chess
-  attr_reader :board
-  attr_accessor :history, :last_notification_message, :game_over
+  attr_accessor :history, :last_notification_message, :game_over, :board, :current_move
 
   # Chess board rows
   ROWS = 'abcdefgh'
@@ -208,7 +207,7 @@ class Chess
     board_column = ROWS.index(coordinates[0])
     board_row = 8 - coordinates[1].to_i
 
-    @board[board_row][board_column] = piece
+    self.board[board_row][board_column] = piece
   end
 
   def own_king_checked?(board, piece, origin, destination, color)
@@ -333,6 +332,11 @@ class Chess
 
   # Set pieces on board in starting position and reset history
   def initialize_game
+
+    # Clear board
+    self.board = Array.new(8) { Array.new(8) }
+
+    # Set pieces
     set_piece(Pawn.new(:white),["a", 2])
     set_piece(Pawn.new(:white),["b", 2])
     set_piece(Pawn.new(:white),["c", 2])
@@ -369,8 +373,11 @@ class Chess
     set_piece(Knight.new(:black),["g",8])
     set_piece(Rook.new(:black),["h",8])
 
-    # Reset history
+    # Reset everything
     self.history = []
+    self.current_move = nil
+    self.last_notification_message = ""
+    self.game_over = false
   end
 
   def parse_input_basic_array(query_text)
