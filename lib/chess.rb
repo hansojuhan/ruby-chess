@@ -1,7 +1,10 @@
 require 'pry-byebug'
 require_relative 'chess_pieces'
+require_relative 'utilities'
 
 class Chess
+  include ChessUtilities
+
   attr_accessor :history, :last_notification_message, :game_over, :board, :current_move, :game_metadata
 
   # Chess board rows

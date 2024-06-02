@@ -1,8 +1,7 @@
 module ChessUtilities
 
-  EXTENSION = ".chess"
-  SAVE_PATH = "/saves"
-  PERMITTED_CLASS = Chess
+  EXTENSION = ".pgn"
+  SAVE_PATH = "saves"
 
   # Get a name and check it doesn't exist
   def find_valid_save_filename(path)
@@ -20,13 +19,23 @@ module ChessUtilities
     end
   end
 
-  # Files the class state to file as yaml
+  # Writes the save into the file
   def save_game_to_file(filename)
     begin
       file = File.open("#{SAVE_PATH}/#{filename}", "w")
-      file.write(class_to_yaml)
+
+      # First, the 7 tags from the game_metadata
+      game_metadata_string = export_game_metadata_to_string(game_metadata)
+      # After that, the game string
+      game_turns_string = parse_game_history_into_savegame_string(history)
+
+      binding.pry
+      file.write(game_metadata_string)
+      file.write("\n")
+      file.write(game_turns_string)
+
     rescue IOError => e
-      # Errors?
+      # Errors? Haven't seen any so far.
     ensure
       file.close
     end
@@ -38,7 +47,6 @@ module ChessUtilities
     # 2) Check in the folder if such file exists
     # 3) If folder does not exist, create that
     # 4) Then save file
-    # 5) Saving file is dumping the class into yaml
 
     # First, check folder exists. If not, make it
     Dir.mkdir("saves") unless Dir.exist?(SAVE_PATH) 
@@ -49,8 +57,8 @@ module ChessUtilities
     # Open and write that into the file
     save_game_to_file(name)
 
-    # Go back to the beginning
-    puts "Game saved as '#{name}'. Press any key to go to main menu."
+    # Return
+    puts "Game saved as '#{name}'. Press any key to return."
     gets
   end
 
@@ -90,8 +98,7 @@ module ChessUtilities
       file = File.open("#{SAVE_PATH}/#{name}", "r")
       lines = File.read(file)
 
-      # Safe load the data, permetting the Hangman class only
-      data = YAML.safe_load(lines, permitted_classes: [PERMITTED_CLASS])
+
     rescue IOError => e
       # Errors
     ensure
@@ -117,10 +124,9 @@ module ChessUtilities
     # @last_guess = data.last_guess
   end
 
-
   # Takes current game history array
   # And outputs
-  def create_save_file(input)
+  def parse_game_history_into_savegame_string(input)
     
     # input = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", "Qc1+"], ["Qd1", "Qxd1+"]]
     # output = "1. d4 d5 2. f3 Qd6 3. Bh6  Qxh6 4. Qd3  Qc1+ 5. Qd1 Qxd1"
@@ -152,17 +158,6 @@ module ChessUtilities
   end
 
   def export_game_metadata_to_string(game_metadata)
-
-    # game_metadata_string = ""
-
-    # # Go through each key
-    # game_metadata.each do |key, value|
-    #   # And build part of the string
-    #   game_metadata_string << "[#{key.to_s.capitalize} \"#{value}\"]\n"
-    # end
-
-    # game_metadata_string = game_metadata.map { |key, value| "[#{key.to_s.capitalize} \"#{value}\"]" }.join("\n") + "\n"
-
     return game_metadata.map { |key, value| "[#{key.to_s.capitalize} \"#{value}\"]" }.join("\n") + "\n"
   end
 
