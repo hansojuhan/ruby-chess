@@ -62,10 +62,10 @@ class Chess
         puts "Ciao!"
         exit(true)
         
-      # elsif ["l","load","load game"].include?(choice)
+      elsif ["l","load","load game"].include?(choice)
 
-      #   load_game
-      #   return
+        load_game
+        return
 
       elsif ["n","new","new game"].include?(choice)
 
