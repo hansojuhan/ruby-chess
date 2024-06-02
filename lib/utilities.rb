@@ -116,4 +116,76 @@ module ChessUtilities
     # @guessed_word = data.guessed_word
     # @last_guess = data.last_guess
   end
+
+
+  # Takes current game history array
+  # And outputs
+  def create_save_file(input)
+    
+    # input = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", "Qc1+"], ["Qd1", "Qxd1+"]]
+    # output = "1. d4 d5 2. f3 Qd6 3. Bh6  Qxh6 4. Qd3  Qc1+ 5. Qd1 Qxd1"
+    
+    # New game check
+    return "*" if input.empty?
+
+    # Construct a string
+    output = ""
+    
+    # For each substring
+    input.each_with_index do |turn, turn_index|
+      # Append string
+      output << "#{turn_index + 1}. "
+
+      # For each move in the turn 
+      turn.each do |move|
+        unless move.nil?
+          output << "#{move} "
+        else
+          output << "*"
+        end
+      end
+
+    end
+
+    # Remove trailing whitespace
+    return output.strip
+  end
+
+  def export_game_metadata_to_string(game_metadata)
+
+    # game_metadata_string = ""
+
+    # # Go through each key
+    # game_metadata.each do |key, value|
+    #   # And build part of the string
+    #   game_metadata_string << "[#{key.to_s.capitalize} \"#{value}\"]\n"
+    # end
+
+    # game_metadata_string = game_metadata.map { |key, value| "[#{key.to_s.capitalize} \"#{value}\"]" }.join("\n") + "\n"
+
+    return game_metadata.map { |key, value| "[#{key.to_s.capitalize} \"#{value}\"]" }.join("\n") + "\n"
+  end
+
+  def import_game_metadata_to_hash(input_game_metadata)
+
+    metadata = {}
+
+    # Split at newline
+    tag_lines = input_game_metadata.split("\n")
+
+    # Check each tag
+    tag_lines.each do |tag|
+      # And match the key and value using regex
+      match = tag.match(/\[([A-Za-z]+) \"(.+?)\"\]/)
+
+      # If match, save it
+      if match
+        key = match[1].downcase.to_sym
+        value = match[2]
+        metadata[key] = value
+      end
+    end
+    
+    return metadata
+  end
 end
