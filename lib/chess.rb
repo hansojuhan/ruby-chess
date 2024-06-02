@@ -2,7 +2,7 @@ require 'pry-byebug'
 require_relative 'chess_pieces'
 
 class Chess
-  attr_accessor :history, :last_notification_message, :game_over, :board, :current_move
+  attr_accessor :history, :last_notification_message, :game_over, :board, :current_move, :game_metadata
 
   # Chess board rows
   ROWS = 'abcdefgh'
@@ -15,9 +15,9 @@ class Chess
     @board = Array.new(8) { Array.new(8) }
 
     # History containing all game moves done
-    @history = []#[["e3",nil]]
+    @history = []
     
-    # Current move
+    # Current move (either :black or :white)
     @current_move = nil
 
     # Variable to save the most recent error/notification message
@@ -25,6 +25,17 @@ class Chess
 
     # Play until this is true
     @game_over = false
+
+    # Game metadata (according to the PGN format)
+    @game_metadata = {
+      event: "?",
+      site: "?",
+      date: "????.??.??",
+      round: "?",
+      white: "?",
+      black: "?",
+      result: "*"
+    }
   end
 
   def print_intro_screen
@@ -330,7 +341,7 @@ class Chess
     board[array[0]][array[1]]
   end
 
-  # Set pieces on board in starting position and reset history
+  # Reset all game history, initialise variables and set pieces on board in starting position
   def initialize_game
 
     # Clear board
@@ -378,6 +389,15 @@ class Chess
     self.current_move = nil
     self.last_notification_message = ""
     self.game_over = false
+    self.game_metadata = {
+      event: "?",
+      site: "?",
+      date: "????.??.??",
+      round: "?",
+      white: "?",
+      black: "?",
+      result: "*"
+    }
   end
 
   def parse_input_basic_array(query_text)
