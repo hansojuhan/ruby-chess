@@ -182,9 +182,7 @@ binding.pry
     # @last_guess = data.last_guess
   end
 
-  # Takes current game history array
-  # And outputs
-  def parse_game_history_into_savegame_string(input)
+  def export_history_array_to_string(input)
     
     # input = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", "Qc1+"], ["Qd1", "Qxd1+"]]
     # output = "1. d4 d5 2. f3 Qd6 3. Bh6  Qxh6 4. Qd3  Qc1+ 5. Qd1 Qxd1"
@@ -213,6 +211,20 @@ binding.pry
 
     # Remove trailing whitespace
     return output.strip
+  end
+
+  def import_history_string_to_array(input)
+    # Return empty array for empty history
+    return [] if input.empty? || input == "*"
+
+    # Use this crazy regex that GPT created
+    turns = input.scan(/\d+\.\s*([^\s]+)\s+([^\s]+)/)
+
+    # Turn the '*' into nil, if exists
+    turns[-1][-1] = nil if turns[-1][-1] == "*"
+
+    # Remove trailing whitespace
+    return turns
   end
 
   def export_game_metadata_to_string(game_metadata)

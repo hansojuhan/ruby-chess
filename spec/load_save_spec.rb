@@ -14,7 +14,7 @@ RSpec.describe 'Load and Save' do
         history_array = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", "Qc1+"], ["Qd1", "Qxd1+"]]
         valid_save = "1. d4 d5 2. f3 Qd6 3. Bh6 Qxh6 4. Qd3 Qc1+ 5. Qd1 Qxd1+"
         
-        expect(parse_game_history_into_savegame_string(history_array)).to eq(valid_save)
+        expect(export_history_array_to_string(history_array)).to eq(valid_save)
       end
 
       it 'From game with unfinished turns' do
@@ -22,7 +22,7 @@ RSpec.describe 'Load and Save' do
         history_array = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", nil]]
         valid_save = "1. d4 d5 2. f3 Qd6 3. Bh6 Qxh6 4. Qd3 *"
 
-        expect(parse_game_history_into_savegame_string(history_array)).to eq(valid_save)
+        expect(export_history_array_to_string(history_array)).to eq(valid_save)
       end
 
       it 'In case of new game, give *' do
@@ -30,7 +30,33 @@ RSpec.describe 'Load and Save' do
         history_array = []
         valid_save = "*"
 
-        expect(parse_game_history_into_savegame_string(history_array)).to eq(valid_save)
+        expect(export_history_array_to_string(history_array)).to eq(valid_save)
+      end
+    end
+
+    context 'When parsing string to history,' do
+      it 'From game with finished turns' do
+        
+        input_save = "1. d4 d5 2. f3 Qd6 3. Bh6 Qxh6 4. Qd3 Qc1+ 5. Qd1 Qxd1+"
+        output_history = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", "Qc1+"], ["Qd1", "Qxd1+"]]
+        
+        expect(import_history_string_to_array(input_save)).to eq(output_history)
+      end
+
+      it 'From game with unfinished turns' do
+
+        input_save = "1. d4 d5 2. f3 Qd6 3. Bh6 Qxh6 4. Qd3 *"
+        output_history = [["d4", "d5"], ["f3", "Qd6"], ["Bh6", "Qxh6"], ["Qd3", nil]]
+
+        expect(import_history_string_to_array(input_save)).to eq(output_history)
+      end
+
+      it 'In case of new game, give *' do
+
+        input_save = "*"
+        output_history = []
+
+        expect(import_history_string_to_array(input_save)).to eq(output_history)
       end
     end
   end
