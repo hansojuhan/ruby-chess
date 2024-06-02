@@ -3,44 +3,6 @@ module ChessUtilities
   EXTENSION = ".pgn"
   SAVE_PATH = "saves"
 
-  # Get a name and check it doesn't exist
-  def find_valid_save_filename(path)
-    name_valid = false
-    until name_valid
-
-      name = gets.chomp
-      name = name << EXTENSION
-
-      if File.exist?("#{SAVE_PATH}/#{name}")
-        print "Save already exists, choose another name: "
-      else
-        return name
-      end 
-    end
-  end
-
-  # Writes the save into the file
-  def save_game_to_file(filename)
-    begin
-      file = File.open("#{SAVE_PATH}/#{filename}", "w")
-
-      # First, the 7 tags from the game_metadata
-      game_metadata_string = export_game_metadata_to_string(game_metadata)
-      # After that, the game string
-      game_turns_string = parse_game_history_into_savegame_string(history)
-
-      binding.pry
-      file.write(game_metadata_string)
-      file.write("\n")
-      file.write(game_turns_string)
-
-    rescue IOError => e
-      # Errors? Haven't seen any so far.
-    ensure
-      file.close
-    end
-  end
-
   def save_game
     # To save game, need to 
     # 1) Get a savegame name
@@ -79,7 +41,6 @@ module ChessUtilities
     # To "load" the game and update the gamestate
     # Go through the history, split into turns
     # For each turn go through the two moves
-return
     # Each move, we need origin and destination
     # Destination is always in the text
     # Origin is represented by the piece (nothing if pawn)
@@ -95,6 +56,54 @@ return
     # Call makemove on the coordinates with origin and destination
 
     # Update class variables
+  end
+
+  # Get a name and check it doesn't exist
+  def find_valid_save_filename(path)
+    name_valid = false
+    until name_valid
+
+      name = gets.chomp
+      name = name << EXTENSION
+
+      if File.exist?("#{SAVE_PATH}/#{name}")
+        print "Save already exists, choose another name: "
+      else
+        return name
+      end 
+    end
+  end
+
+  # Writes the save into the file
+  def save_game_to_file(filename)
+    begin
+      file = File.open("#{SAVE_PATH}/#{filename}", "w")
+
+      # First, the 7 tags from the game_metadata
+      game_metadata_string = export_game_metadata_to_string(game_metadata)
+      # After that, the game string
+      game_turns_string = parse_game_history_into_savegame_string(history)
+
+      binding.pry
+      file.write(game_metadata_string)
+      file.write("\n")
+      file.write(game_turns_string)
+
+    rescue IOError => e
+      # Errors? Haven't seen any so far.
+    ensure
+      file.close
+    end
+  end
+
+  def update_game_state(data)
+    # Open and write that into the file
+    puts "TODO"
+    gets
+    # @remaining_guesses = data.remaining_guesses
+    # @secret_word = data.secret_word
+    # @guessed_word = data.guessed_word
+    # @last_guess = data.last_guess
   end
 
   def initialize_metadata
@@ -170,16 +179,6 @@ binding.pry
         list_all_saved_games
       end 
     end
-  end
-
-  def update_game_state(data)
-    # Open and write that into the file
-    puts "TODO"
-    gets
-    # @remaining_guesses = data.remaining_guesses
-    # @secret_word = data.secret_word
-    # @guessed_word = data.guessed_word
-    # @last_guess = data.last_guess
   end
 
   def export_history_array_to_string(input)
